@@ -29,8 +29,8 @@ static PatchAction patchActions[GetOrdinalCount()] = {
     PatchAction::FunctionReplacePatchByOriginal,     //   GAME_CloseAllGames												@10006
     PatchAction::FunctionReplacePatchByOriginal,     //   GAME_ReceiveDatabaseCharacter										@10007
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10008														@10008
-    PatchAction::FunctionReplacePatchByOriginal,     //   GAME_SetGlobalAct													@10009
-    PatchAction::FunctionReplacePatchByOriginal,     //   GAME_SetInitSeed													@10010
+    PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_SetGlobalAct													@10009
+    PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_SetInitSeed													@10010
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10011														@10011
     PatchAction::FunctionReplacePatchByOriginal,     //   GAME_GetGamesCount												@10012
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10013														@10013
@@ -82,7 +82,7 @@ static PatchAction patchActions[GetOrdinalCount()] = {
     PatchAction::FunctionReplacePatchByOriginal,     //   PLAYER_SetVirtualPlayerCount										@10059
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10060_Return												@10060
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10061_Return												@10061
-    PatchAction::FunctionReplacePatchByOriginal,     //   GAME_ReturnArgument												@10062
+    PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_ReturnArgument												@10062
 };
 
 extern "C" {
