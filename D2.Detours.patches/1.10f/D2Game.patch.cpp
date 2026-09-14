@@ -43,7 +43,7 @@ static PatchAction patchActions[GetOrdinalCount()] = {
     PatchAction::FunctionReplacePatchByOriginal,     //   GAME_GetStatistics												@10020
     PatchAction::FunctionReplacePatchByOriginal,     //   GAME_SendMessageToAllClients										@10021
     PatchAction::FunctionReplacePatchByOriginal,     //   GAME_SendMessageToGameClients										@10022
-    PatchAction::FunctionReplacePatchByOriginal,     //   GAME_SetServerCallbackFunctions									@10023
+    PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_SetServerCallbackFunctions									@10023
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10024_RemoveClientFromGame									@10024
     PatchAction::FunctionReplacePatchByOriginal,     //   DEBUG_GetUnitFromTypeAndGUID										@10025
     PatchAction::FunctionReplacePatchByOriginal,     //   DEBUG_GetAct														@10026
@@ -56,7 +56,7 @@ static PatchAction patchActions[GetOrdinalCount()] = {
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10033														@10033
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10034_Return												@10034
     PatchAction::FunctionReplacePatchByOriginal,     //   QUESTS_DisableSequences											@10035
-    PatchAction::FunctionReplacePatchByOriginal,     //   D2GAME_10036_PLRSAVE_EnableSaveFileWriting						@10036
+    PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   D2GAME_10036_PLRSAVE_EnableSaveFileWriting						@10036
     PatchAction::FunctionReplacePatchByOriginal,     //   QUESTS_CheckFirstPickedSet										@10037
     PatchAction::FunctionReplacePatchByOriginal,     //   QUESTS_CheckNotIntroQuest											@10038
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10039														@10039
@@ -71,7 +71,7 @@ static PatchAction patchActions[GetOrdinalCount()] = {
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10048_Return1												@10048
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10049_Return1												@10049
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10050														@10050
-    PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10051														@10051
+    PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_GetFrameRate														@10051
     PatchAction::FunctionReplacePatchByOriginal,     //   GAME_GetMemoryUsage												@10052
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10053														@10053
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10054														@10054

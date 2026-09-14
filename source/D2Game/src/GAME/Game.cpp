@@ -2617,7 +2617,7 @@ void __stdcall D2Game_10054(uint16_t* a1, int32_t nMaxCount)
 }
 
 //D2Game.0x6FC39EC0 (#10051)
-int32_t __fastcall D2Game_10051()
+int32_t __fastcall GAME_GetFrameRate()
 {
     return gnFrameRate_6FD2CA14;
 }

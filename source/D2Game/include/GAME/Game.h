@@ -378,7 +378,7 @@ D2GAME_DLL_DECL void __stdcall D2Game_10053(int16_t* pCount, int32_t nArraySize)
 //D2Game.0x6FC39D80
 D2GAME_DLL_DECL void __stdcall D2Game_10054(uint16_t* a1, int32_t nMaxCount);
 //D2Game.0x6FC39EC0
-D2GAME_DLL_DECL int32_t __fastcall D2Game_10051();
+D2GAME_DLL_DECL int32_t __fastcall GAME_GetFrameRate();
 //D2Game.0x6FC39ED0
 D2GAME_DLL_DECL void __stdcall GAME_GetMemoryUsage(int* pCurrentMemoryUsage, int* pPeakMemoryUsageInLast10s);
 //D2Game.0x6FC39EF0
