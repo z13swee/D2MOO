@@ -421,7 +421,7 @@ D2GameStrc* __fastcall sub_6FC3B160();
 //D2Game.0x6FC3B220
 void __fastcall GAME_LeaveGlobalGamesCriticalSection();
 //D2Game.0x6FC3B280
-void __stdcall D2Game_10008(int32_t a1);
+void __stdcall GAME_SetTargetFrameRate(int32_t a1);
 //D2Game.0x6FC3B2A0 (#10009)
 D2GAME_DLL_DECL void __stdcall GAME_SetGlobalAct(int32_t nAct);
 //D2Game.0x6FC3B2B0
