@@ -50,7 +50,7 @@ EXPORTS
 	D2Game_10048_Return1												@10048
 	D2Game_10049_Return1												@10049
 	D2Game_10050														@10050
-	D2Game_10051														@10051
+	GAME_GetFrameRate													@10051
 	GAME_GetMemoryUsage													@10052
 	D2Game_10053														@10053
 	D2Game_10054														@10054
