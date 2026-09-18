@@ -7,7 +7,7 @@ EXPORTS
 	GAME_UpdateClients													@10005
 	GAME_CloseAllGames													@10006
 	GAME_ReceiveDatabaseCharacter										@10007
-	D2Game_10008														@10008
+	GAME_SetTargetFrameRate												@10008
 	GAME_SetGlobalAct													@10009
 	GAME_SetInitSeed													@10010
 	D2Game_10011														@10011

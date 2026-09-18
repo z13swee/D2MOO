@@ -3127,7 +3127,7 @@ void __fastcall GAME_LeaveGlobalGamesCriticalSection()
 }
 
 //D2Game.0x6FC3B280
-void __stdcall D2Game_10008(int32_t a1)
+void __stdcall GAME_SetTargetFrameRate(int32_t a1)
 {
     gnTargetFrameRate_6FD2CA60 = a1;
     gnTargetMsPerFrame_6FD457F8 = 1000 / a1;

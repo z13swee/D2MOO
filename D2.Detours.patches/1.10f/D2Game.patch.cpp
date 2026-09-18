@@ -28,11 +28,11 @@ static PatchAction patchActions[GetOrdinalCount()] = {
     PatchAction::FunctionReplacePatchByOriginal,     //   GAME_UpdateClients												@10005
     PatchAction::FunctionReplacePatchByOriginal,     //   GAME_CloseAllGames												@10006
     PatchAction::FunctionReplacePatchByOriginal,     //   GAME_ReceiveDatabaseCharacter										@10007
-    PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10008														@10008
-    PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_SetGlobalAct													@10009
-    PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_SetInitSeed													@10010
+    PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_SetTargetFrameRate														@10008
+    PatchAction::FunctionReplacePatchByOriginal,     //   GAME_SetGlobalAct													@10009
+    PatchAction::FunctionReplacePatchByOriginal,     //   GAME_SetInitSeed													@10010
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10011														@10011
-    PatchAction::FunctionReplacePatchByOriginal,     //   GAME_GetGamesCount												@10012
+    PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_GetGamesCount												@10012
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10013														@10013
     PatchAction::FunctionReplacePatchByOriginal,     //   GAME_GetGameInformation											@10014
     PatchAction::FunctionReplacePatchByOriginal,     //   GAME_GetGameServerGameIds											@10015
@@ -56,7 +56,7 @@ static PatchAction patchActions[GetOrdinalCount()] = {
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10033														@10033
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10034_Return												@10034
     PatchAction::FunctionReplacePatchByOriginal,     //   QUESTS_DisableSequences											@10035
-    PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   D2GAME_10036_PLRSAVE_EnableSaveFileWriting						@10036
+    PatchAction::FunctionReplacePatchByOriginal,     //   D2GAME_10036_PLRSAVE_EnableSaveFileWriting						@10036
     PatchAction::FunctionReplacePatchByOriginal,     //   QUESTS_CheckFirstPickedSet										@10037
     PatchAction::FunctionReplacePatchByOriginal,     //   QUESTS_CheckNotIntroQuest											@10038
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10039														@10039
@@ -79,7 +79,7 @@ static PatchAction patchActions[GetOrdinalCount()] = {
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10056														@10056
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10057														@10057
     PatchAction::FunctionReplacePatchByOriginal,     //   CLIENTS_GetExpansionClientCount									@10058
-    PatchAction::FunctionReplacePatchByOriginal,     //   PLAYER_SetVirtualPlayerCount										@10059
+    PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   PLAYER_SetVirtualPlayerCount										@10059
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10060_Return												@10060
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10061_Return												@10061
     PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_ReturnArgument												@10062
