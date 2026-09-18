@@ -29,8 +29,8 @@ static PatchAction patchActions[GetOrdinalCount()] = {
     PatchAction::FunctionReplacePatchByOriginal,     //   GAME_CloseAllGames												@10006
     PatchAction::FunctionReplacePatchByOriginal,     //   GAME_ReceiveDatabaseCharacter										@10007
     PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_SetTargetFrameRate														@10008
-    PatchAction::FunctionReplacePatchByOriginal,     //   GAME_SetGlobalAct													@10009
-    PatchAction::FunctionReplacePatchByOriginal,     //   GAME_SetInitSeed													@10010
+    PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_SetGlobalAct													@10009
+    PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_SetInitSeed													@10010
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10011														@10011
     PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_GetGamesCount												@10012
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10013														@10013
