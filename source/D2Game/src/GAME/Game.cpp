@@ -200,7 +200,7 @@ void __stdcall GAME_SetInitSeed(int32_t nInitSeed)
 }
 
 //D2Game.0x6FC35930
-uint32_t __fastcall D2Game_10011()
+uint32_t __fastcall GAME_GetFirstGameInitSeed()
 {
     int32_t nGUID = 0;
     EnterCriticalSection(&gCriticalSection_6FD45800);
@@ -1315,7 +1315,7 @@ BOOL __stdcall GAME_DisconnectClientByName(const char* szClientName, D2C_SRV2CLT
 }
 
 //D2Game.0x6FC379C0
-void __stdcall D2Game_10024_RemoveClientFromGame(int32_t nClientId)
+void __stdcall GAME_RemoveClientFromGame(int32_t nClientId)
 {
     if (!nClientId)
     {
@@ -2540,7 +2540,7 @@ int32_t __fastcall GAME_GetGamesCount()
 }
 
 //D2Game.0x6FC39B70 (#10057)
-int32_t __stdcall D2Game_10057()
+int32_t __stdcall GAME_GetExpansionGamesCount()
 {
     int32_t nExpansionGames = 0;
     for (int32_t i = 0; i < std::size(gnGamesGUIDs_6FD447F8); ++i)
@@ -2563,9 +2563,10 @@ int32_t __stdcall D2Game_10057()
 }
 
 //D2Game.0x6FC39C70 (#10053)
-void __stdcall D2Game_10053(int16_t* pCount, int32_t nArraySize)
+void __stdcall GAME_CountGamesByClientCount(int16_t* pCount, int32_t nArraySize)
 {
-    memset(pCount, 0, nArraySize);
+    // memset(pCount, 0, nArraySize);
+	memset(pCount, 0, sizeof(*pCount) * (nArraySize + 1));
 
     for (int32_t i = 0; i < 1024; ++i)
     {
@@ -2590,7 +2591,7 @@ void __stdcall D2Game_10053(int16_t* pCount, int32_t nArraySize)
 }
 
 //D2Game.0x6FC39D80 (#10054)
-void __stdcall D2Game_10054(uint16_t* a1, int32_t nMaxCount)
+void __stdcall GAME_CountGamesByDuration(uint16_t* a1, int32_t nMaxCount)
 {
     memset(a1, 0, sizeof(*a1) * nMaxCount);
 
@@ -2600,11 +2601,12 @@ void __stdcall D2Game_10054(uint16_t* a1, int32_t nMaxCount)
         {
             if (D2GameStrc* pGame = GAME_LockGame(gnGamesGUIDs_6FD447F8[i]))
             {
-                const int32_t nSecondsPassed = pGame->dwGameFrame / DEFAULT_FRAMES_PER_SECOND;
+                // const int32_t nSecondsPassed = pGame->dwGameFrame / DEFAULT_FRAMES_PER_SECOND;
 
                 D2_UNLOCK(pGame->lpCriticalSection);
 
-                int32_t nIndex = nSecondsPassed / 300;
+                // int32_t nIndex = nSecondsPassed / 300;
+				int32_t nIndex = (pGame->dwGameFrame / 100) / 300;
                 if (nIndex >= nMaxCount)
                 {
                     nIndex = nMaxCount - 1;
@@ -2630,7 +2632,7 @@ void __stdcall GAME_GetMemoryUsage(int* pCurrentMemoryUsage, int* pPeakMemoryUsa
 }
 
 //D2Game.0x6FC39EF0 (#10013)
-int32_t __stdcall D2Game_10013(uint16_t nGameId)
+int32_t __stdcall GAME_GetGameClientCount(uint16_t nGameId)
 {
 	const D2GameGUID nGUID = GAME_GetGameGUIDFromGameId(nGameId);
     D2_ASSERT(gpGameDataTbl_6FD45818);
@@ -2645,6 +2647,13 @@ int32_t __stdcall D2Game_10013(uint16_t nGameId)
 }
 
 //D2Game.0x6FC39FF0 (#10014)
+// 1.10f mismatches:
+// - nTime: retail is unsigned (nCreationTimeMs_Or_CPUTargetRatioFP10 - GetTickCount()) / 1000 / 60
+//   D2MOO substract GetTickCount() - field.
+
+// - dwLastUsedUnitGUID[0]: retail writes GUID[0] onto nPlayers then overwrites it; only GUID[1..5]
+//   stay in the output (tile at pGameInfo+0x3C). D2MOO copies all six starting at +0x28
+
 BOOL __stdcall GAME_GetGameInformation(uint16_t nGameId, D2GameInfoStrc* pGameInfo)
 {
 	const D2GameGUID nGUID = GAME_GetGameGUIDFromGameId(nGameId);
@@ -2966,7 +2975,7 @@ void __stdcall GAME_GetUnitsDescriptions(uint16_t nGameId, D2UnitDescriptionList
 }
 
 //D2Game.0x6FC3AB20 (#10018)
-int32_t __stdcall D2Game_10018(uint16_t nGameId, int32_t nMaxCount, D2UnitInfoStrc* pUnitInfo, int32_t* pUnitType, int32_t* pUnitGUID)
+int32_t __stdcall GAME_GetUnitsInfo(uint16_t nGameId, int32_t nMaxCount, D2UnitInfoStrc* pUnitInfo, int32_t* pUnitType, int32_t* pUnitGUID)
 {
     const D2GameGUID nGUID = GAME_GetGameGUIDFromGameId(nGameId);
 
