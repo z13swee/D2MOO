@@ -80,7 +80,7 @@ static PatchAction patchActions[GetOrdinalCount()] = {
     PatchAction::FunctionReplacePatchByOriginal,       //   FOG_10049 @10049
     PatchAction::FunctionReplacePatchByOriginal,       //   FOG_10050_EnterCriticalSection @10050
     PatchAction::FunctionReplacePatchByOriginal,       //   FOG_10051 @10051
-    PatchAction::FunctionReplacePatchByOriginal,       //   FOG_GetMemoryUsage @10052
+    PatchAction::FunctionReplacePatchByOriginal,       //   -- @10052
     PatchAction::FunctionReplacePatchByOriginal,       //   FOG_10053 @10053
     PatchAction::FunctionReplacePatchByOriginal,       //   FOG_10054 @10054
     PatchAction::FunctionReplacePatchByOriginal,       //   FOG_10055_GetSyncTime @10055
@@ -175,7 +175,7 @@ static PatchAction patchActions[GetOrdinalCount()] = {
     PatchAction::FunctionReplacePatchByOriginal,       //   FOG_10144 @10144
     PatchAction::FunctionReplacePatchByOriginal,       //   FOG_10145 @10145
     PatchAction::FunctionReplacePatchByOriginal,       //   FOG_10146 @10146
-    PatchAction::FunctionReplacePatchByOriginal,       //   FOG_10147 @10147
+    PatchAction::FunctionReplacePatchByOriginal,       //   FOG_GetMemoryUsage @10147
     PatchAction::FunctionReplacePatchByOriginal,       //   FOG_10148 @10148
     PatchAction::FunctionReplacePatchByOriginal,       //   FOG_InitializeServer @10149
     PatchAction::FunctionReplacePatchByOriginal,       //   FOG_10150 @10150
@@ -356,7 +356,39 @@ void* __fastcall FOG_Debug_ReallocPool(void* pMemPool, void* pMemory, int nSize,
 }
 #endif
 
-static ExtraPatchAction extraPatchActions[] = {    
+// Retail Fog.#10019 registers this as SetUnhandledExceptionFilter (RVA 0xE6B0).
+// Under Visual Studio it is invoked with a null EXCEPTION_POINTERS* and AVs at
+// 0x6FF5E730 (mov ebx,[eax]). x32dbg ignores that first-chance path; VS does not.
+// Skip Fog's crash reporter while a debugger is attached, or if ExceptionInfo is null.
+typedef LONG(WINAPI* FogUnhandledExceptionFilterFn)(EXCEPTION_POINTERS*);
+static FogUnhandledExceptionFilterFn Fog_UnhandledExceptionFilter_Original = nullptr;
+
+static LONG WINAPI Fog_UnhandledExceptionFilter_Guard(EXCEPTION_POINTERS* pExceptionInfo)
+{
+	if (!pExceptionInfo || !pExceptionInfo->ExceptionRecord || IsDebuggerPresent())
+	{
+		return EXCEPTION_CONTINUE_SEARCH;
+	}
+	if (Fog_UnhandledExceptionFilter_Original)
+	{
+		return Fog_UnhandledExceptionFilter_Original(pExceptionInfo);
+	}
+	return EXCEPTION_CONTINUE_SEARCH;
+}
+
+// ntdll RtlInitializeCriticalSectionEx does `mov [esi+14h], ecx` (SpinCount).
+// A NULL CS pointer therefore AVs writing 0x00000014. VS also leaves DebugInfo
+// NULL; RtlEnter then uses it as a pointer. D2Client calls kernel32 CS APIs
+// directly (not Fog.#10050), so hook those too.
+static void Fog_SanitizeCriticalSection(CRITICAL_SECTION* pCriticalSection)
+{
+	if (pCriticalSection && pCriticalSection->DebugInfo == nullptr)
+	{
+		pCriticalSection->DebugInfo = (PRTL_CRITICAL_SECTION_DEBUG)(ULONG_PTR)-1;
+	}
+}
+
+static ExtraPatchAction extraPatchActions[] = {
 #ifdef REPLACE_FOG_ALLOCS_BY_MALLOC
 #ifdef D2_VERSION_110F
 	{ 0x6FF58F50 - FogImageBase, &FOG_Debug_Alloc, PatchAction::FunctionReplaceOriginalByPatch },

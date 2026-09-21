@@ -1,4 +1,22 @@
 #include <DetoursPatch.h>
+#include <cstdint>
+#include "../../source/D2Game/include/GAME/GameHashTableFog.h"
+
+// D2Game.patch.cpp is compiled into the D2Game shared target (not D2GameObjects),
+// so it does not see D2Common includes. Do not pull GAME/Game.h here; keep the
+// thiscall thunk declarations in sync with Game.h instead.
+struct D2GameStrc;
+struct D2GameDataTableStrc;
+class HASHKEY_NONE;
+typedef struct HGAMEDATA__ { int unused; }* HGAMEDATA;
+typedef struct GAMEDATALOCKEDHANDLE__ { int unused; }* GAMEDATALOCKEDHANDLE;
+using D2GameGUID = uint32_t;
+
+D2GameStrc* __fastcall D2GameDataTable_Lock(D2GameDataTableStrc* pGameDataTable, int32_t nUnused, HGAMEDATA hGame, GAMEDATALOCKEDHANDLE* pLockedHandle, int32_t forWriting);
+void __fastcall D2GameDataTable_SyncEnterLock(D2GameDataTableStrc* pGameDataTable, int32_t nUnused, int32_t* pLockHandle, int32_t bForWriting);
+void __fastcall D2GameDataTable_SyncLeaveLock(D2GameDataTableStrc* pGameDataTable, int32_t nUnused, int32_t tLockHandle);
+D2GameStrc* __fastcall D2GameDataTable_New(D2GameDataTableStrc* pGameDataTable, int32_t nUnused, D2GameGUID nGameGUID, HASHKEY_NONE* pKey, int32_t extrabytes, int32_t flags);
+D2GameStrc* __fastcall D2GameDataTable_Ptr(D2GameDataTableStrc* pGameDataTable, int32_t nUnused, D2GameGUID nGameGUID, const HASHKEY_NONE* pHashKey);
 
 //#define DISABLE_ALL_PATCHES
 
@@ -24,12 +42,12 @@ extern "C" {
 static PatchAction patchActions[GetOrdinalCount()] = {
 	
     PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   D2Game_10001_Return0		Only code review												@10001
-    PatchAction::FunctionReplacePatchByOriginal,     //   GAME_InitGameDataTable											@10002
-    PatchAction::FunctionReplacePatchByOriginal,     //   GAME_ProcessNetworkMessages										@10003
-    PatchAction::FunctionReplacePatchByOriginal,     //   GAME_UpdateGamesProgress											@10004
-    PatchAction::FunctionReplacePatchByOriginal,     //   GAME_UpdateClients												@10005
-    PatchAction::FunctionReplacePatchByOriginal,     //   GAME_CloseAllGames												@10006
-    PatchAction::FunctionReplacePatchByOriginal,     //   GAME_ReceiveDatabaseCharacter										@10007
+    PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_InitGameDataTable											@10002
+    PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_ProcessNetworkMessages										@10003
+    PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_UpdateGamesProgress											@10004
+    PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_UpdateClients												@10005
+    PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_CloseAllGames												@10006
+    PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_ReceiveDatabaseCharacter										@10007
     PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_SetTargetFrameRate											@10008
     PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_SetGlobalAct												@10009
     PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_SetInitSeed												@10010
@@ -68,11 +86,11 @@ static PatchAction patchActions[GetOrdinalCount()] = {
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10043														@10043
     PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10044														@10044
     PatchAction::FunctionReplacePatchByOriginal,     //   TASK_ProcessGame													@10045
-    PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10046														@10046
-    PatchAction::FunctionReplacePatchByOriginal,     //   GAME_CreateNewEmptyGame											@10047
+    PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_Initialize														@10046
+    PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_CreateNewEmptyGame											@10047
     PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   D2Game_10048_Return1											@10048
     PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   D2Game_10049_Return1											@10049
-    PatchAction::FunctionReplacePatchByOriginal,     //   D2Game_10050														@10050
+    PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_Shutdown														@10050
     PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_GetFrameRate												@10051
     PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_GetMemoryUsage	(D2GS)											@10052
     PatchAction::FunctionReplaceOriginalByPatch, /*C*/ //   GAME_CountGamesByClientCount	*Code Change*	(D2GS)				@10053
@@ -105,8 +123,15 @@ PatchAction __cdecl GetPatchAction(int ordinal)
 
 static const int D2GameImageBase = 0x6FC30000;
 
-static ExtraPatchAction extraPatchActions[] = {    
-    { 0, 0, PatchAction::Ignore}, // Here because we need at least one element in the array
+static ExtraPatchAction extraPatchActions[] = {
+#if D2GAME_ROUTE_HASHTABLE_THROUGH_FOG
+    { 0x6FC3B480 - D2GameImageBase, &D2GameDataTable_Lock, PatchAction::FunctionReplacePatchByOriginal },
+    { 0x6FC3B510 - D2GameImageBase, &D2GameDataTable_SyncEnterLock, PatchAction::FunctionReplacePatchByOriginal },
+    { 0x6FC3B540 - D2GameImageBase, &D2GameDataTable_SyncLeaveLock, PatchAction::FunctionReplacePatchByOriginal },
+    { 0x6FC3B590 - D2GameImageBase, &D2GameDataTable_New, PatchAction::FunctionReplacePatchByOriginal },
+    { 0x6FC3B6A0 - D2GameImageBase, &D2GameDataTable_Ptr, PatchAction::FunctionReplacePatchByOriginal },
+#endif
+    { 0, 0, PatchAction::Ignore},
 };
 
 __declspec(dllexport)

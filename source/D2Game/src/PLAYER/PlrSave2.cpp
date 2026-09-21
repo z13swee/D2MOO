@@ -1607,7 +1607,8 @@ int32_t __fastcall PLRSAVE2_ProcessSaveFile(D2GameStrc* pGame, D2ClientStrc* pCl
 
         uint8_t* pSectionEnd = pSection + 298;
         const uint32_t nVersion = pSaveHeader->dwVersion;
-        if (pSectionEnd > pSaveFileEnd || pSaveHeader->dwHeaderMagic != '!ooW' || nVersion != 6)
+        /*if (pSectionEnd > pSaveFileEnd || pSaveHeader->dwHeaderMagic != '!ooW' || nVersion != 6)*/
+		if (pSectionEnd > pSaveFileEnd || *(uint32_t*)pSection != '!ooW' || *(uint32_t*)(pSection + 4) != 6)
         {
             nErrorCode = PLRSAVE2ERROR_BAD_QUESTRECORD;
         }

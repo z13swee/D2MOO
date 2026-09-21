@@ -1524,7 +1524,6 @@ int32_t __fastcall CLIENTS_AttachSaveFile(int32_t nClientId, const void* pSaveDa
         {
             pClient->dwFlags |= CLIENTFLAGEX_HAS_SAVE_CHECKSUM;
             pClient->nSaveChecksum = D2GAME_SAVE_CalculateChecksum_6FC8A140(pClient->pSaveHeader, pClient->nSaveHeaderSize);
-            GAME_LogMessage(7, "[LOAD]   CKSUM:%08X len:%-4d %s", pClient->nSaveChecksum, pClient->nSaveHeaderSize, pClient->szName);
             nResult = 1;
         }
     }

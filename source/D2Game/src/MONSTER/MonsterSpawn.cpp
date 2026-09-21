@@ -1,7 +1,9 @@
 #include "MONSTER/MonsterSpawn.h"
 
-#include <D2BitManip.h>
+#include "Windows.h"
 
+#include <D2BitManip.h>
+#include <D2CMP.h>
 #include <D2Collision.h>
 #include <D2DataTbls.h>
 #include <D2Dungeon.h>
@@ -258,525 +260,455 @@ D2UnitStrc* __fastcall sub_6FC68D70(D2GameStrc* pGame, D2UnitStrc* pUnit, int32_
 //1.11: D2Game.0x6FCE79E0
 D2UnitStrc* __fastcall D2GAME_SpawnNormalMonster_6FC68E30(D2UnkMonCreateStrc* pMonCreate)
 {
-    return nullptr;
+	// Retail 1.10f at D2Game.0x6FC68E30, reconstructed from the live DLL.
+	static const int32_t dword_6FD28BC8[][2] = {
+		{ 0, -3 },
+		{ 3, 0 },
+		{ 0, 3 },
+		{ -3, 0 },
+	};
 
-//    D2UnkMonCreateStrc* v1; // ebp@1
-//    int32_t nMonsterId; // eax@1
-//    int32_t v3; // edi@2
-//    D2MonStatsTxt* ptMonStatsTxtRecord; // edx@3
-//    int32_t v5; // eax@6
-//    int32_t v6; // edx@8
-//    D2MonStats2Txt* v7; // eax@8
-//    D2MonStats2Txt* v8; // edi@8
-//    D2ActiveRoomStrc* v9; // ebx@9
-//    int16_t v10; // cx@9
-//    int32_t v11; // eax@9
-//    int32_t v12; // eax@14
-//    int32_t v13; // edx@16
-//    int32_t v14; // esi@18
-//    int32_t v15; // eax@19
-//    int32_t v16; // ecx@20
-//    BYTE v17; // al@22
-//    D2C_MonsterIds v18; // eax@23
-//    D2ActiveRoomStrc** v19; // ecx@27
-//    DWORD v20; // eax@29
-//    int64_t v21; // qax@31
-//    int32_t v22; // esi@33
-//    int32_t v23; // esi@36
-//    int32_t v24; // ebp@38
-//    int32_t v25; // edi@38
-//    int32_t v26; // esi@39
-//    int32_t v27; // edi@45
-//    int32_t v28; // eax@47
-//    int32_t v29; // esi@47
-//    uint32_t v30; // edx@51
-//    D2ActiveRoomStrc* v31; // eax@52
-//    int32_t v32; // ecx@55
-//    int32_t v33; // ebp@61
-//    uint32_t v34; // eax@61
-//    int64_t v35; // qax@61
-//    int32_t v36; // edx@61
-//    uint64_t v37; // kr20_8@61
-//    __int32_t64 v38; // qcx@61
-//    uint64_t v39; // kr18_8@61
-//    int32_t v40; // edi@61
-//    uint32_t v41; // edx@63
-//    int64_t v42; // qax@65
-//    int64_t v43; // qax@66
-//    int32_t v44; // edx@70
-//    int64_t v45; // qax@72
-//    int64_t v46; // qax@73
-//    __int32_t64 v47; // qax@76
-//    uint32_t v48; // kr08_4@76
-//    __int32_t64 v49; // qax@76
-//    int64_t v50; // qax@78
-//    uint32_t v51; // edx@80
-//    int32_t v52; // ebx@80
-//    int32_t v53; // ebp@80
-//    int32_t v54; // edi@83
-//    int32_t v55; // eax@90
-//    int32_t v56; // ebx@112
-//    D2UnitStrc* result; // eax@113
-//    D2UnkMonCreateStrc* v58; // edi@116
-//    D2ActiveRoomStrc* v59; // ebp@116
-//    D2UnitStrc* v60; // esi@116
-//    int32_t v61; // eax@117
-//    D2RoomCoordListStrc* v62; // eax@119
-//    D2MonsterDataStrc* v63; // ecx@122
-//    int32_t v64; // eax@130
-//    D2GameStrc* v65; // edi@130
-//    D2MonStatsTxt* v66; // ecx@132
-//    int32_t v67; // ebp@152
-//    D2GameStrc* v68; // edi@152
-//    D2ActiveRoomStrc* v69; // ebx@152
-//    D2MonStatsTxt* v70; // eax@152
-//    int32_t v71; // eax@153
-//    int32_t v72; // ST40_4@167
-//    int32_t v73; // ST3C_4@167
-//    int32_t v74; // eax@167
-//    int32_t v75; // [sp+3Ch] [bp-ACh]@142
-//    int32_t v76; // [sp+3Ch] [bp-ACh]@172
-//    int32_t v77; // [sp+40h] [bp-A8h]@142
-//    int32_t v78; // [sp+40h] [bp-A8h]@170
-//    int32_t v79; // [sp+40h] [bp-A8h]@172
-//    int32_t pNumRooms; // [sp+54h] [bp-94h]@35
-//    uint32_t v81; // [sp+58h] [bp-90h]@20
-//    D2ActiveRoomStrc** pFloorCount; // [sp+5Ch] [bp-8Ch]@22
-//    int32_t nX; // [sp+60h] [bp-88h]@22
-//    D2ActiveRoomStrc* pRoom; // [sp+64h] [bp-84h]@9
-//    D2UnkMonCreateStrc* v85; // [sp+68h] [bp-80h]@1
-//    int32_t v86; // [sp+6Ch] [bp-7Ch]@68
-//    int32_t nY; // [sp+70h] [bp-78h]@22
-//    uint32_t nCollisionFlags; // [sp+74h] [bp-74h]@10
-//    D2DrlgTileDataStrc* v89; // [sp+78h] [bp-70h]@15
-//    int32_t v90; // [sp+7Ch] [bp-6Ch]@9
-//    int32_t v91; // [sp+80h] [bp-68h]@15
-//    uint32_t v92; // [sp+84h] [bp-64h]@80
-//    int32_t v93; // [sp+88h] [bp-60h]@80
-//    D2MonStatsTxt* v94; // [sp+8Ch] [bp-5Ch]@3
-//    int32_t v95; // [sp+90h] [bp-58h]@68
-//    uint32_t v96; // [sp+94h] [bp-54h]@80
-//    int32_t v97; // [sp+98h] [bp-50h]@15
-//    int32_t v98; // [sp+9Ch] [bp-4Ch]@15
-//    int32_t v99; // [sp+A0h] [bp-48h]@15
-//    int32_t v100; // [sp+A4h] [bp-44h]@15
-//    int32_t v101; // [sp+A8h] [bp-40h]@61
-//    D2MonStats2Txt* v102; // [sp+B0h] [bp-38h]@8
-//    uint32_t v103; // [sp+B4h] [bp-34h]@80
-//    uint32_t v104; // [sp+BCh] [bp-2Ch]@76
-//    int32_t v105; // [sp+C4h] [bp-24h]@76
-//    int32_t a2; // [sp+C8h] [bp-20h]@15
-//    int32_t v107; // [sp+CCh] [bp-1Ch]@15
-//    int32_t v108; // [sp+D0h] [bp-18h]@15
-//    int32_t v109; // [sp+D4h] [bp-14h]@15
-//    int32_t v110; // [sp+D8h] [bp-10h]@38
-//    int32_t v111; // [sp+DCh] [bp-Ch]@38
-//
-//    v1 = pMonCreate;
-//    v85 = pMonCreate;
-//    nMonsterId = pMonCreate->nMonsterId;
-//    if (nMonsterId < 0
-//        || (v3 = sgptDataTables->nMonStatsTxtRecordCount, nMonsterId >= v3)
-//        || (ptMonStatsTxtRecord = sgptDataTables->pMonStatsTxt, (v94 = &ptMonStatsTxtRecord[nMonsterId]) == 0)
-//        || nMonsterId < 0
-//        || nMonsterId >= v3
-//        || (v5 = ptMonStatsTxtRecord[nMonsterId].wMonStatsEx, v5 < 0)
-//        || v5 >= sgptDataTables->nMonStats2TxtRecordCount
-//        || (v6 = 77 * v5, v7 = sgptDataTables->pMonStats2Txt, v8 = &v7[4 * v6 / 0x134u], v102 = &v7[4 * v6 / 0x134u], !v8))
-//        return 0;
-//    v9 = pMonCreate->pRoom;
-//    v10 = pMonCreate->nFlags;
-//    pRoom = v1->pRoom;
-//    v11 = v8->nSpawnCol;
-//    LOWORD(v90) = v10;
-//    switch (v11)
-//    {
-//    case 1:
-//        nCollisionFlags = 0x1C0u;
-//        break;
-//    case 2:
-//        nCollisionFlags = COLLIDE_MASK_PLACEMENT;
-//        break;
-//    case 3:
-//        nCollisionFlags = 0;
-//        break;
-//    default:
-//        nCollisionFlags = COLLIDE_MASK_MONSTER_PATH;
-//        break;
-//    }
-//    v12 = v1->pRoomCoordList;
-//    if (v12)
-//    {
-//        CopyRect((LPRECT)&v97, (const RECT*)(v12 + 16));
-//        DUNGEON_GameTileToSubtileCoords(&v97, &v98);
-//        DUNGEON_GameTileToSubtileCoords(&v99, &v100);
-//        v13 = v1->pRoomCoordList;
-//        v91 = 1;
-//        v89 = *(D2DrlgTileDataStrc**)(v13 + 40);
-//    }
-//    else
-//    {
-//        DUNGEON_GetRoomCoordinates(v9, (D2DrlgCoordsStrc*)&a2);
-//        v100 = v107 + v109;
-//        v97 = a2;
-//        v99 = a2 + v108;
-//        v98 = v107;
-//        v89 = 0;
-//        v91 = 0;
-//    }
-//    if (!v9 || (v14 = (int32_t)&v9->pSeed, v9 == (D2ActiveRoomStrc*)-60))
-//        return 0;
-//    v15 = v1->field_20;
-//    if (v15 >= 0)
-//    {
-//        v81 = 3;
-//        v16 = 3 * v15;
-//    }
-//    else
-//    {
-//        v81 = 0;
-//        v16 = 0;
-//    }
-//    v17 = v8->nSpawnCol;
-//    pFloorCount = (D2ActiveRoomStrc**)v16;
-//    nY = 0;
-//    nX = 0;
-//    if (v17 != 1
-//        || (v18 = v1->nMonsterId, v18 >= MONSTER_TENTACLE1) && v18 <= MONSTER_TENTACLEHEAD3
-//        || v18 == MONSTER_HELLMETEOR)
-//    {
-//        if ((int32_t)v81 > v16)
-//            return 0;
-//        while (1)
-//        {
-//            HIDWORD(v38) = v85->nX;
-//            v33 = v85->nY;
-//            v34 = *(_DWORD*)v14;
-//            v101 = v85->nX;
-//            v35 = 1791398085i64 * v34;
-//            v37 = __PAIR__(HIDWORD(v35), v81);
-//            LODWORD(v38) = v37 >> 32;
-//            v36 = v37;
-//            v39 = __PAIR__(v38, *(_DWORD*)(v14 + 4)) + (uint32_t)v35;
-//            LODWORD(v38) = (__PAIR__(v38, *(_DWORD*)(v14 + 4)) + (uint32_t)v35) >> 32;
-//            *(_DWORD*)v14 = v39;
-//            *(_DWORD*)(v14 + 4) = v38;
-//            v40 = 2 * v36 >> 1;
-//            if (v39 & 1)
-//            {
-//                pNumRooms = v36;
-//                if (v40 > 0)
-//                {
-//                    HIDWORD(v38) = 0;
-//                    if ((v40 - 1) & v40)
-//                    {
-//                        v42 = v38 + 1791398085i64 * (uint32_t)v39;
-//                        *(_QWORD*)v14 = v42;
-//                        v41 = (uint32_t)v42 % v40;
-//                    }
-//                    else
-//                    {
-//                        v43 = v38 + 1791398085i64 * (uint32_t)v39;
-//                        *(_QWORD*)v14 = v43;
-//                        v41 = v43 & (v40 - 1);
-//                    }
-//                    HIDWORD(v38) = v101;
-//                }
-//                else
-//                {
-//                    v41 = 0;
-//                }
-//                LODWORD(v38) = v41;
-//                v95 = 0;
-//                v86 = 1;
-//            }
-//            else
-//            {
-//                if (v40 > 0)
-//                {
-//                    HIDWORD(v38) = 0;
-//                    if ((v40 - 1) & v40)
-//                    {
-//                        v45 = v38 + 1791398085i64 * (uint32_t)v39;
-//                        *(_QWORD*)v14 = v45;
-//                        v44 = (uint32_t)v45 % v40;
-//                    }
-//                    else
-//                    {
-//                        v46 = v38 + 1791398085i64 * (uint32_t)v39;
-//                        *(_QWORD*)v14 = v46;
-//                        v44 = v46 & (v40 - 1);
-//                    }
-//                    HIDWORD(v38) = v101;
-//                }
-//                else
-//                {
-//                    v44 = 0;
-//                }
-//                LODWORD(v38) = v81;
-//                pNumRooms = v44;
-//                v95 = 1;
-//                v86 = 0;
-//            }
-//            LODWORD(v47) = 1791398085 * *(_DWORD*)v14;
-//            v105 = 1791398085 * (uint64_t)*(_DWORD*)v14 >> 32;
-//            v48 = *(_DWORD*)(v14 + 4);
-//            HIDWORD(v47) = v105;
-//            *(_DWORD*)v14 = *(_DWORD*)(v14 + 4) + v47;
-//            v49 = v47 + v48;
-//            v104 = HIDWORD(v49);
-//            *(_DWORD*)(v14 + 4) = HIDWORD(v49);
-//            if (v49 & 1)
-//                pNumRooms = -pNumRooms;
-//            v50 = v104 + 1791398085i64 * (uint32_t)v49;
-//            *(_QWORD*)v14 = v50;
-//            if (v50 & 1)
-//                LODWORD(v38) = -(int32_t)v38;
-//            v51 = v81;
-//            HIDWORD(v38) += pNumRooms;
-//            v53 = v38 + v33;
-//            v96 = v85->nX - v81;
-//            v103 = 2 * v81 + v96;
-//            v92 = v85->nY - v81;
-//            v93 = 2 * v81 + v92;
-//            pNumRooms = 8 * v81;
-//            if (!(8 * v81))
-//                break;
-//            if ((int32_t)(8 * v81) > 0)
-//                goto LABEL_83;
-//LABEL_110:
-//            v81 = v51 + 3;
-//            if ((int32_t)(v51 + 3) > (int32_t)pFloorCount)
-//                goto LABEL_111;
-//        }
-//        pNumRooms = 1;
-//LABEL_83:
-//        v54 = v95;
-//        while (1)
-//        {
-//            if (v52 == v96 && v53 == v92)
-//            {
-//                v54 = 1;
-//                v86 = 0;
-//            }
-//            if (v52 == v103)
-//            {
-//                if (v53 == v92)
-//                {
-//                    v54 = 0;
-//                    v86 = 1;
-//                }
-//                v55 = v93;
-//                if (v53 == v93)
-//                {
-//                    v54 = -1;
-//                    v86 = 0;
-//                }
-//            }
-//            else
-//            {
-//                v55 = v93;
-//            }
-//            if (v52 == v96)
-//            {
-//                if (v53 == v55)
-//                {
-//                    v54 = 0;
-//                    v86 = -1;
-//                }
-//                if (v53 == v92 && v52 == v103 && v53 == v55)
-//                {
-//                    v54 = 0;
-//                    v86 = 0;
-//                }
-//            }
-//            v52 += v54;
-//            v53 += v86;
-//            if (PtInRect((const RECT*)&v97, (POINT)__PAIR__(v53, v52)))
-//            {
-//                if (!v91 || (D2DrlgTileDataStrc*)D2Common_10095(pRoom, v52, v53) == v89)
-//                {
-//                    if (sub_6FC68350(v85->nMonsterId, pRoom, v52, (D2ActiveRoomStrc**)v53, 1)
-//                        && (!COLLISION_CheckMaskWithSize(pRoom, v52, v53, v102->nSizeX, nCollisionFlags)
-//                            || SLOBYTE(v85->nFlags) < 0))
-//                        break;
-//                }
-//            }
-//            --pNumRooms;
-//            if (pNumRooms <= 0)
-//                goto LABEL_109;
-//        }
-//        nX = v52;
-//        nY = v53;
-//        v81 = (uint32_t)pFloorCount;
-//LABEL_109:
-//        v51 = v81;
-//        goto LABEL_110;
-//    }
-//    v89 = DUNGEON_GetFloorTilesFromRoom(v9, (int32_t*)&pFloorCount);
-//    if (v89)
-//    {
-//        v19 = pFloorCount;
-//        if (pFloorCount)
-//        {
-//            if ((int32_t)pFloorCount > 0)
-//            {
-//                if ((uint32_t)((char*)pFloorCount - 1) & (uint32_t)pFloorCount)
-//                {
-//                    v21 = v9->pSeed.nHighSeed + 1791398085i64 * *(_DWORD*)v14;
-//                    *(_QWORD*)v14 = v21;
-//                    v20 = (uint32_t)v21 % (uint32_t)v19;
-//                }
-//                else
-//                {
-//                    v20 = (uint32_t)((char*)pFloorCount - 1) & ITEMS_RollRandomNumber(&v9->pSeed);
-//                }
-//            }
-//            else
-//            {
-//                v20 = 0;
-//            }
-//            v22 = v20;
-//            if (!v20)
-//                v22 = 1;
-//            DUNGEON_GetRoomCoordinates(v9, (D2DrlgCoordsStrc*)&a2);
-//            pNumRooms = v22;
-//            v91 = v22 - 1;
-//            if (v22 != v22 - 1)
-//            {
-//                while (1)
-//                {
-//                    v23 = (int32_t)&v89[pNumRooms];
-//                    if (*(_DWORD*)(v23 + 24))
-//                    {
-//                        if (D2CMP_10079(*(_DWORD*)(v23 + 24)) & 2)
-//                        {
-//                            v24 = 5 * (v111 + *(_DWORD*)(v23 + 12)) + 3;
-//                            v25 = 5 * (v110 + *(_DWORD*)(v23 + 8)) + 3;
-//                            if (!COLLISION_CheckMask(v9, v25, v24, COLLIDE_MONSTER))
-//                                break;
-//                        }
-//                    }
-//LABEL_42:
-//                    pNumRooms = (pNumRooms + 1) % (uint32_t)pFloorCount;
-//                    if (pNumRooms == v91)
-//                        goto LABEL_45;
-//                }
-//                v26 = (int32_t)&unk_6FD28BC8;
-//                while (COLLISION_CheckMaskWithSize(v9, v25 + *(_DWORD*)v26, v24 + *(_DWORD*)(v26 + 4), 2, 0x1C09u))
-//                {
-//                    v26 += 8;
-//                    if (v26 >= (int32_t)&unk_6FD28BE8)
-//                        goto LABEL_42;
-//                }
-//                nX = v25;
-//                nY = v24;
-//            }
-//        }
-//    }
-//LABEL_45:
-//    v27 = nX;
-//    if (nX >= v9->nSubtileX && nX < v9->nSubtileX + v9->nSubtileWidth)
-//    {
-//        v28 = v9->nSubtileY;
-//        v29 = nY;
-//        if (nY < v28)
-//            goto LABEL_51;
-//        if (nY < v28 + v9->nSubtileHeight)
-//            goto LABEL_111;
-//        v9 = pRoom;
-//    }
-//    v29 = nY;
-//LABEL_51:
-//    pFloorCount = 0;
-//    pNumRooms = 0;
-//    DUNGEON_GetAdjacentRoomsListFromRoom(v9, &pFloorCount, &pNumRooms);
-//    v30 = 0;
-//    if ((uint32_t)pNumRooms <= 0)
-//    {
-//LABEL_58:
-//        pRoom = 0;
-//    }
-//    else
-//    {
-//        while (1)
-//        {
-//            v31 = pFloorCount[v30];
-//            if (v31)
-//            {
-//                if (v27 >= v31->nSubtileX)
-//                {
-//                    if (v27 < v31->nSubtileX + v31->nSubtileWidth)
-//                    {
-//                        v32 = v31->nSubtileY;
-//                        if (v29 >= v32)
-//                        {
-//                            if (v29 < v32 + v31->nSubtileHeight)
-//                                break;
-//                        }
-//                    }
-//                }
-//            }
-//            ++v30;
-//            if (v30 >= pNumRooms)
-//                goto LABEL_58;
-//        }
-//        pRoom = pFloorCount[v30];
-//    }
-//LABEL_111:
-//    if (nX)
-//    {
-//        v56 = nY;
-//        if (nY)
-//        {
-//            result = (D2UnitStrc*)1;
-//            if (v90 & 1)
-//                return result;
-//            if (v90 & 0x20)
-//                LOBYTE(result) = 3;
-//            v58 = v85;
-//            v59 = pRoom;
-//            v60 = SUNIT_AllocUnitData(1, v85->nMonsterId, nX, nY, v85->pGame, pRoom, (char)result, v85->nAnimMode, v85->nUnitGUID);
-//            if (!v60)
-//                return v60;
-//            v61 = v90 & 8;
-//            if (BYTE2(v94->dwMonStatsFlags) & gdwBitMasks[2])
-//                v61 = 1;
-//            sub_6FC68180(v58->pGame->pMonReg, v59, v60, v61);
-//            v62 = (D2RoomCoordListStrc*)v58->pRoomCoordList;
-//            if (!v62)
-//                v62 = D2Common_10096(v59, nX, v56);
-//            if (v60->dwUnitType == 1)
-//            {
-//                v63 = (D2MonsterDataStrc*)v60->pPlayerData;
-//                if (v63)
-//                    v63->pVision = (DWORD)v62;
-//            }
-//            if (v94->nAlign == 1)
-//            {
-//                sub_6FCBDD30(v60, 2u, 1);
-//                v60->dwFlags |= UNITFLAG_NOTC;
-//            }
-//            else
-//            {
-//                if (v94->nAlign == 2)
-//                    sub_6FCBDD30(v60, 1u, 1);
-//                else
-//                    sub_6FCBDD30(v60, 0, 1);
-//            }
-//            if (!(v90 & 2))
-//            {
-//                MONSTERSPAWN_SetupNormalMods(v58, v60)
-//            }
-//            MONSTERSPAWN_SetupBossMods(pMonCreate, v60);
-//            if (!(v90 & 0x40))
-//                sub_6FC69C00((int32_t)v85, v60);
-//            return v60;
-//        }
-//    }
-//    return 0;
+	if (!pMonCreate)
+	{
+		return nullptr;
+	}
+
+	const int32_t nMonsterId = pMonCreate->nMonsterId;
+	D2MonStatsTxt* pMonStatsTxtRecord = MONSTERMODE_GetMonStatsTxtRecord(nMonsterId);
+	if (!pMonStatsTxtRecord)
+	{
+		return nullptr;
+	}
+
+	D2MonStats2Txt* pMonStats2TxtRecord = MONSTERREGION_GetMonStats2TxtRecord(nMonsterId);
+	if (!pMonStats2TxtRecord)
+	{
+		return nullptr;
+	}
+
+	D2ActiveRoomStrc* pRoom = pMonCreate->pRoom;
+	const int16_t nFlags = pMonCreate->nFlags;
+
+	uint32_t nCollisionFlags = COLLIDE_MASK_MONSTER_PATH;
+	switch (pMonStats2TxtRecord->nSpawnCol)
+	{
+	case 1:
+		nCollisionFlags = 0x1C0;
+		break;
+	case 2:
+		nCollisionFlags = COLLIDE_MASK_PLACEMENT;
+		break;
+	case 3:
+		nCollisionFlags = 0;
+		break;
+	default:
+		nCollisionFlags = COLLIDE_MASK_MONSTER_PATH;
+		break;
+	}
+
+	RECT spawnRect = {};
+	int32_t nRoomCoordListIndex = 0;
+	int32_t bUseRoomCoordList = 0;
+	if (pMonCreate->pRoomCoordList)
+	{
+		int32_t nLeft = pMonCreate->pRoomCoordList->pBox[1].nPosX;
+		int32_t nTop = pMonCreate->pRoomCoordList->pBox[1].nPosY;
+		int32_t nRight = pMonCreate->pRoomCoordList->pBox[1].nWidth;
+		int32_t nBottom = pMonCreate->pRoomCoordList->pBox[1].nHeight;
+		DUNGEON_GameTileToSubtileCoords(&nLeft, &nTop);
+		DUNGEON_GameTileToSubtileCoords(&nRight, &nBottom);
+		spawnRect.left = nLeft;
+		spawnRect.top = nTop;
+		spawnRect.right = nRight;
+		spawnRect.bottom = nBottom;
+		bUseRoomCoordList = 1;
+		nRoomCoordListIndex = pMonCreate->pRoomCoordList->nIndex;
+	}
+	else if (pRoom)
+	{
+		D2DrlgCoordsStrc roomCoords = {};
+		DUNGEON_GetRoomCoordinates(pRoom, &roomCoords);
+		spawnRect.left = roomCoords.nSubtileX;
+		spawnRect.top = roomCoords.nSubtileY;
+		spawnRect.right = roomCoords.nSubtileX + roomCoords.nSubtileWidth;
+		spawnRect.bottom = roomCoords.nSubtileY + roomCoords.nSubtileHeight;
+	}
+
+	if (!pRoom)
+	{
+		return nullptr;
+	}
+
+	D2SeedStrc* pSeed = &pRoom->pSeed;
+
+	int32_t nRadius = 0;
+	int32_t nMaxRadius = 0;
+	if (pMonCreate->field_20 >= 0)
+	{
+		nRadius = 3;
+		nMaxRadius = 3 * pMonCreate->field_20;
+	}
+
+	int32_t nSpawnX = 0;
+	int32_t nSpawnY = 0;
+
+	const int32_t bFloorSpawn = pMonStats2TxtRecord->nSpawnCol == 1
+		&& (nMonsterId < MONSTER_TENTACLE1 || nMonsterId > MONSTER_TENTACLEHEAD3)
+		&& nMonsterId != MONSTER_HELLMETEOR;
+
+	if (bFloorSpawn)
+	{
+		int32_t nFloorCount = 0;
+		D2DrlgTileDataStrc* pFloorTiles = DUNGEON_GetFloorTilesFromRoom(pRoom, &nFloorCount);
+		if (pFloorTiles && nFloorCount > 0)
+		{
+			int32_t nIndex = ITEMS_RollLimitedRandomNumber(pSeed, nFloorCount);
+			if (!nIndex)
+			{
+				nIndex = 1;
+			}
+
+			D2DrlgCoordsStrc roomCoords = {};
+			DUNGEON_GetRoomCoordinates(pRoom, &roomCoords);
+			const int32_t nStartIndex = nIndex - 1;
+			if (nIndex != nStartIndex)
+			{
+				while (1)
+				{
+					D2DrlgTileDataStrc* pTileData = &pFloorTiles[nIndex];
+					if (pTileData->pTile && (D2CMP_10079_GetTileFlags(pTileData->pTile) & TILE_FLAGS_WATER))
+					{
+						const int32_t nTileX = 5 * (roomCoords.nTileXPos + pTileData->nPosX) + 3;
+						const int32_t nTileY = 5 * (roomCoords.nTileYPos + pTileData->nPosY) + 3;
+						if (!COLLISION_CheckMask(pRoom, nTileX, nTileY, COLLIDE_MONSTER))
+						{
+							int32_t bPlaced = 0;
+							for (int32_t i = 0; i < 4; ++i)
+							{
+								const int32_t nTestX = nTileX + dword_6FD28BC8[i][0];
+								const int32_t nTestY = nTileY + dword_6FD28BC8[i][1];
+								if (!COLLISION_CheckMaskWithSize(pRoom, nTestX, nTestY, 2, 0x1C09u))
+								{
+									nSpawnX = nTestX;
+									nSpawnY = nTestY;
+									bPlaced = 1;
+									break;
+								}
+							}
+							if (bPlaced)
+							{
+								break;
+							}
+						}
+					}
+
+					nIndex = (nIndex + 1) % nFloorCount;
+					if (nIndex == nStartIndex)
+					{
+						break;
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		if (nRadius > nMaxRadius)
+		{
+			return nullptr;
+		}
+
+		while (nRadius <= nMaxRadius)
+		{
+			const int32_t nOriginX = pMonCreate->nX;
+			const int32_t nOriginY = pMonCreate->nY;
+			const uint64_t lSeed0 = SEED_RollRandomNumber(pSeed);
+			const int32_t nHalf = nRadius;
+			int32_t nStepX = 0;
+			int32_t nStepY = 0;
+			int32_t nOffsetX = 0;
+			int32_t nOffsetY = 0;
+
+			if (lSeed0 & 1)
+			{
+				nOffsetX = nRadius;
+				nOffsetY = ITEMS_RollLimitedRandomNumber(pSeed, nHalf);
+				nStepX = 0;
+				nStepY = 1;
+			}
+			else
+			{
+				nOffsetX = ITEMS_RollLimitedRandomNumber(pSeed, nHalf);
+				nOffsetY = nRadius;
+				nStepX = 1;
+				nStepY = 0;
+			}
+
+			const uint64_t lSeed1 = SEED_RollRandomNumber(pSeed);
+			if (lSeed1 & 1)
+			{
+				nOffsetX = -nOffsetX;
+			}
+			const uint64_t lSeed2 = SEED_RollRandomNumber(pSeed);
+			if (lSeed2 & 1)
+			{
+				nOffsetY = -nOffsetY;
+			}
+
+			int32_t nX = nOriginX + nOffsetX;
+			int32_t nY = nOriginY + nOffsetY;
+			const int32_t nLeft = nOriginX - nRadius;
+			const int32_t nRight = nOriginX + nRadius;
+			const int32_t nTop = nOriginY - nRadius;
+			const int32_t nBottom = nOriginY + nRadius;
+			int32_t nSteps = 8 * nRadius;
+			if (!nSteps)
+			{
+				nSteps = 1;
+			}
+
+			if (nSteps > 0)
+			{
+				while (nSteps > 0)
+				{
+					if (nX == nLeft && nY == nTop)
+					{
+						nStepX = 1;
+						nStepY = 0;
+					}
+					if (nX == nRight)
+					{
+						if (nY == nTop)
+						{
+							nStepX = 0;
+							nStepY = 1;
+						}
+						if (nY == nBottom)
+						{
+							nStepX = -1;
+							nStepY = 0;
+						}
+					}
+					if (nX == nLeft)
+					{
+						if (nY == nBottom)
+						{
+							nStepX = 0;
+							nStepY = -1;
+						}
+						if (nY == nTop && nX == nRight && nY == nBottom)
+						{
+							nStepX = 0;
+							nStepY = 0;
+						}
+					}
+
+					nX += nStepX;
+					nY += nStepY;
+
+					POINT pt = {};
+					pt.x = nX;
+					pt.y = nY;
+					if (PtInRect(&spawnRect, pt))
+					{
+						if (!bUseRoomCoordList || D2Common_10095(pRoom, nX, nY) == nRoomCoordListIndex)
+						{
+							if (sub_6FC68350(pMonCreate->nMonsterId, pRoom, nX, nY, 1)
+								&& (!COLLISION_CheckMaskWithSize(pRoom, nX, nY, pMonStats2TxtRecord->nSizeX, nCollisionFlags)
+									|| (int8_t)nFlags < 0))
+							{
+								nSpawnX = nX;
+								nSpawnY = nY;
+								nRadius = nMaxRadius;
+								break;
+							}
+						}
+					}
+
+					--nSteps;
+				}
+			}
+
+			nRadius += 3;
+		}
+	}
+
+	if (nSpawnX < pRoom->tCoords.nSubtileX || nSpawnX >= pRoom->tCoords.nSubtileX + pRoom->tCoords.nSubtileWidth
+		|| nSpawnY < pRoom->tCoords.nSubtileY || nSpawnY >= pRoom->tCoords.nSubtileY + pRoom->tCoords.nSubtileHeight)
+	{
+		D2ActiveRoomStrc** ppRooms = nullptr;
+		int32_t nNumRooms = 0;
+		DUNGEON_GetAdjacentRoomsListFromRoom(pRoom, &ppRooms, &nNumRooms);
+
+		D2ActiveRoomStrc* pFoundRoom = nullptr;
+		for (int32_t i = 0; i < nNumRooms; ++i)
+		{
+			D2ActiveRoomStrc* pAdj = ppRooms[i];
+			if (!pAdj)
+			{
+				continue;
+			}
+
+			if (nSpawnX >= pAdj->tCoords.nSubtileX && nSpawnX < pAdj->tCoords.nSubtileX + pAdj->tCoords.nSubtileWidth
+				&& nSpawnY >= pAdj->tCoords.nSubtileY && nSpawnY < pAdj->tCoords.nSubtileY + pAdj->tCoords.nSubtileHeight)
+			{
+				pFoundRoom = pAdj;
+				break;
+			}
+		}
+
+		pRoom = pFoundRoom;
+	}
+
+	if (!nSpawnX || !nSpawnY)
+	{
+		return nullptr;
+	}
+
+	if (nFlags & 1)
+	{
+		return (D2UnitStrc*)1;
+	}
+
+	const char nAllocFlags = (nFlags & 0x20) ? 3 : 1;
+	D2UnitStrc* pUnit = SUNIT_AllocUnitData(UNIT_MONSTER, pMonCreate->nMonsterId, nSpawnX, nSpawnY, pMonCreate->pGame, pRoom, nAllocFlags, pMonCreate->nAnimMode, pMonCreate->nUnitGUID);
+	if (!pUnit)
+	{
+		return nullptr;
+	}
+
+	int32_t bNeverCount = nFlags & 8;
+	if (pMonStatsTxtRecord->dwMonStatsFlags & gdwBitMasks[MONSTATSFLAGINDEX_NEVERCOUNT])
+	{
+		bNeverCount = 1;
+	}
+
+	sub_6FC68180(pMonCreate->pGame->pMonReg, pRoom, pUnit, bNeverCount);
+
+	D2RoomCoordListStrc* pRoomCoordList = pMonCreate->pRoomCoordList;
+	if (!pRoomCoordList)
+	{
+		pRoomCoordList = D2Common_10096(pRoom, nSpawnX, nSpawnY);
+	}
+
+	if (pUnit->dwUnitType == UNIT_MONSTER && pUnit->pMonsterData)
+	{
+		pUnit->pMonsterData->pVision = (uint32_t)pRoomCoordList;
+	}
+
+	if (pMonStatsTxtRecord->nAlign == 1)
+	{
+		sub_6FCBDD30(pUnit, 2u, 1);
+		pUnit->dwFlags |= UNITFLAG_NOTC;
+	}
+	else if (pMonStatsTxtRecord->nAlign == 2)
+	{
+		sub_6FCBDD30(pUnit, 1u, 1);
+	}
+	else
+	{
+		sub_6FCBDD30(pUnit, 0, 1);
+	}
+
+	if (!(nFlags & 2))
+	{
+		MONSTERSPAWN_SetupNormalMods(pMonCreate, pUnit);
+	}
+
+	MONSTERSPAWN_SetupBossMods(pMonCreate, pUnit);
+
+	if (!(nFlags & 0x40))
+	{
+		sub_6FC69C00(pMonCreate, pUnit);
+	}
+
+	return pUnit;
 }
 
+//1.10: Inlined
+//1.14d: 0x005B21B0
+void __fastcall MONSTERSPAWN_SetupNormalMods(D2UnkMonCreateStrc* pMonCreate, D2UnitStrc* pUnit)
+{
+	int32_t nMonsterId = pMonCreate->nMonsterId;
+	D2GameStrc* pGame = pMonCreate->pGame;
+
+	D2MonStatsTxt* pMonStatsTxtRecord = MONSTERMODE_GetMonStatsTxtRecord(nMonsterId);
+	if (pMonStatsTxtRecord)
+	{
+		nMonsterId = pMonStatsTxtRecord->nBaseId;
+	}
+
+	if (nMonsterId < 0 || nMonsterId >= sgptDataTables->nMonStatsTxtRecordCount)
+	{
+		return;
+	}
+
+	int32_t nUMod = 0;
+	int32_t bUnique = 0;
+	int32_t bHasMod = 0;
+
+	switch (nMonsterId)
+	{
+	case MONSTER_BRUTE2:
+		nUMod = MONUMOD_IGNOREAC;
+		bHasMod = 1;
+		break;
+	case MONSTER_SCARAB1:
+		nUMod = MONUMOD_CHARGEDBOLTS;
+		bHasMod = 1;
+		break;
+	case MONSTER_MUMMY1:
+		nUMod = MONUMOD_POISDEATH;
+		bHasMod = 1;
+		break;
+	case MONSTER_DURIEL:
+		D2GAME_BOSSES_AssignUMod_6FC6FF10(pGame, pUnit, 11, 0);
+		nUMod = MONUMOD_QUESTMOD;
+		bUnique = 1;
+		bHasMod = 1;
+		break;
+	case MONSTER_ANCIENTBARB1:
+	case MONSTER_ANCIENTBARB2:
+	case MONSTER_ANCIENTBARB3:
+		nUMod = MONUMOD_QUESTMOD;
+		bUnique = 1;
+		bHasMod = 1;
+		break;
+	case MONSTER_TRAP_MELEE:
+		nUMod = MONUMOD_SPCDAMAGE;
+		bHasMod = 1;
+		break;
+	case MONSTER_SUICIDEMINION1:
+		nUMod = MONUMOD_FREEZINDEATH;
+		bHasMod = 1;
+		break;
+	case MONSTER_REANIMATEDHORDE1:
+		nUMod = MONUMOD_SELFRESURRECT;
+		bHasMod = 1;
+		break;
+	case MONSTER_FROZENHORROR1:
+		nUMod = MONUMOD_ICESHATTERDEATH;
+		bHasMod = 1;
+		break;
+	default:
+		if (nMonsterId >= MONSTER_BONEPRISON1 && nMonsterId <= MONSTER_BONEPRISON4)
+		{
+			nUMod = MONUMOD_KILLMINIONSDEATH;
+			bHasMod = 1;
+		}
+		else if (nMonsterId > MONSTER_EVILHOLE5 && nMonsterId <= MONSTER_TRAP_LIGHTNING)
+		{
+			nUMod = MONUMOD_SPCDAMAGE;
+			bHasMod = 1;
+		}
+		break;
+	}
+
+	if (bHasMod)
+	{
+		D2GAME_BOSSES_AssignUMod_6FC6FF10(pGame, pUnit, nUMod, bUnique);
+	}
+}
 
 
 

@@ -1,4 +1,5 @@
 #include "GAME/Game.h"
+#include "GAME/GameHashTableFog.h"
 
 #include <algorithm>
 
@@ -55,6 +56,8 @@ int32_t gnAct_6FD45824;
 D2ServerCallbackFunctions* gpD2EventCallbackTable_6FD45830;
 CRITICAL_SECTION gCriticalSection_6FD45800;
 HGAMEDATA hGameArray_6FD447F8[1024]; // TODO: Right size?
+// Retail has one 1024-slot table at 6FD447F8; Hex-Rays split the name into create vs tick arrays.
+int32_t (&gnGamesGUIDs_6FD447F8)[1024] = *reinterpret_cast<int32_t(*)[1024]>(hGameArray_6FD447F8);
 int32_t gwGameId_6FD2CA04 = 1;
 D2GameDataTableStrc* gpGameDataTbl_6FD45818;
 int32_t gbD2ServerCallbackFunctionsInitialized_6FD45834;
@@ -72,7 +75,6 @@ uint32_t dword_6FD45848;
 int32_t dword_6FD2CA10 = 1;
 char gszEmptyString_6FD447EC[8];
 
-int32_t gnGamesGUIDs_6FD447F8[1024];
 
 BOOL gbAllowTimeoutDisconnection_6FD2CA00 = TRUE;
 
@@ -89,6 +91,50 @@ constexpr void(__fastcall* gpfGetDescription_6FD2CA64[5])(char*, int32_t) =
     GAME_GetItemDescription,
     GAME_GetMissileDescription
 };
+
+static D2GameStrc* GAME_HashTableNewLock(HGAMEDATA* pHGame, GAMEDATALOCKEDHANDLE* pHLock)
+{
+#if D2GAME_ROUTE_HASHTABLE_THROUGH_FOG
+    int32_t nLock = 0;
+    D2GameDataTable_SyncEnterLock(gpGameDataTbl_6FD45818, 0, &nLock, TRUE);
+    *pHLock = reinterpret_cast<GAMEDATALOCKEDHANDLE>(static_cast<uintptr_t>(static_cast<intptr_t>(nLock)));
+
+    HASHKEY_NONE tKey{};
+    D2GameGUID nGuid = 0;
+    do
+    {
+        ++nGuid;
+        if (nGuid == 0 || nGuid == D2GameInvalidGUID)
+        {
+            nGuid = 1;
+        }
+    } while (D2GameDataTable_Ptr(gpGameDataTbl_6FD45818, 0, nGuid, &tKey) != nullptr);
+
+    *pHGame = GetGameHandleFromHashValue(nGuid);
+    return D2GameDataTable_New(gpGameDataTbl_6FD45818, 0, nGuid, &tKey, 0, 0);
+#else
+    return gpGameDataTbl_6FD45818->tHashTable.NewLock(pHGame, pHLock);
+#endif
+}
+
+static void GAME_HashTableUnlock(GAMEDATALOCKEDHANDLE hLock)
+{
+#if D2GAME_ROUTE_HASHTABLE_THROUGH_FOG
+    D2GameDataTable_SyncLeaveLock(gpGameDataTbl_6FD45818, 0, static_cast<int32_t>(reinterpret_cast<intptr_t>(hLock)));
+#else
+    gpGameDataTbl_6FD45818->tHashTable.Unlock(hLock);
+#endif
+}
+
+static D2GameStrc* GAME_HashTableLock(HGAMEDATA hGame, GAMEDATALOCKEDHANDLE* pHLock, int32_t bForWriting)
+{
+#if D2GAME_ROUTE_HASHTABLE_THROUGH_FOG
+    return D2GameDataTable_Lock(gpGameDataTbl_6FD45818, 0, hGame, pHLock, bForWriting);
+#else
+    return gpGameDataTbl_6FD45818->tHashTable.Lock(hGame, pHLock, bForWriting);
+#endif
+}
+
 
 
 
@@ -119,7 +165,9 @@ void GAME_LogMessage(int32_t a1, const char* szFormat, ...)
     va_start(va, szFormat);
     vsprintf(szMessage, szFormat, va); // NOLINT(clang-diagnostic-deprecated-declarations)
 
-    if (gpD2EventCallbackTable_6FD45830 && gpD2EventCallbackTable_6FD45830->pfServerLogMessage)
+    if (gpD2EventCallbackTable_6FD45830 && 
+		gpD2EventCallbackTable_6FD45830->pfGetDatabaseCharacter &&
+		gpD2EventCallbackTable_6FD45830->pfServerLogMessage)
     {
         gpD2EventCallbackTable_6FD45830->pfServerLogMessage(a1, "%s", szMessage);
     }
@@ -130,7 +178,7 @@ void GAME_LogMessage(int32_t a1, const char* szFormat, ...)
 }
 
 //D2Game.0x6FC357C0
-int32_t __stdcall D2Game_10046()
+int32_t __stdcall GAME_Initialize()
 {
     SRegLoadValue("Diablo II", "PlayerPos", 0, &dword_6FD4582C);
     memset(gnGamesGUIDs_6FD447F8, 0, sizeof(gnGamesGUIDs_6FD447F8));
@@ -142,7 +190,7 @@ int32_t __stdcall D2Game_10046()
 }
 
 //D2Game.0x6FC35810
-int32_t __stdcall D2Game_10050()
+int32_t __stdcall GAME_Shutdown()
 {
     CLIENTS_Release();
     DeleteCriticalSection(&gCriticalSection_6FD45800);
@@ -405,8 +453,8 @@ BOOL __stdcall GAME_CreateNewEmptyGame(char* szGameName, const char* szPassword,
 
     GAMEDATALOCKEDHANDLE hLock;
     HGAMEDATA hGame;
-    D2GameStrc* pGame = gpGameDataTbl_6FD45818->tHashTable.NewLock(&hGame, &hLock);
-    gpGameDataTbl_6FD45818->tHashTable.Unlock(hLock);
+    D2GameStrc* pGame = GAME_HashTableNewLock(&hGame, &hLock);
+    GAME_HashTableUnlock(hLock);
 
     D2_ASSERT(pGame);
     pGame->lpCriticalSection = D2_ALLOC_STRC_POOL(nullptr, CRITICAL_SECTION);
@@ -511,7 +559,7 @@ BOOL __stdcall GAME_CreateNewEmptyGame(char* szGameName, const char* szPassword,
         pGame->nSyncTimer = 2;
     }
 
-    D2Game_10042((D2TaskStrc*) &pGame[1], 0, (D2LinkStrc*)hGame);
+    D2Game_10042((D2TaskStrc*) &pGame->unk0x1DC8, 0, (D2LinkStrc*)hGame);
     pGame->nCreationTimeMs_Or_CPUTargetRatioFP10 = GetTickCount();
     *pGameId = pGame->nGameId;
 
@@ -621,8 +669,8 @@ void __fastcall GAME_SendGameInit(int32_t nClientId, char* szGameName, uint8_t n
 
     GAMEDATALOCKEDHANDLE hLock;
     HGAMEDATA hGame;
-    D2GameStrc* pGame = gpGameDataTbl_6FD45818->tHashTable.NewLock(&hGame, &hLock);
-    gpGameDataTbl_6FD45818->tHashTable.Unlock(hLock);
+    D2GameStrc* pGame = GAME_HashTableNewLock(&hGame, &hLock);
+    GAME_HashTableUnlock(hLock);
 
     if (!pGame)
     {
@@ -775,7 +823,7 @@ void __fastcall GAME_SendGameInit(int32_t nClientId, char* szGameName, uint8_t n
     }
 
     // TODO: 1st argument
-    D2Game_10042((D2TaskStrc*)&pGame[1], 0, (D2LinkStrc*)hGame);
+    D2Game_10042((D2TaskStrc*)&pGame->unk0x1DC8, 0, (D2LinkStrc*)hGame);
 
     if (gpD2EventCallbackTable_6FD45830 && gpD2EventCallbackTable_6FD45830->pfGetDatabaseCharacter)
     {
@@ -2408,7 +2456,7 @@ void __fastcall GAME_CloseGame(D2GameGUID nGameGUID)
     if (gpGameDataTbl_6FD45818)
     {
         GAMEDATALOCKEDHANDLE hLock;
-        if (D2GameStrc* pGame = gpGameDataTbl_6FD45818->tHashTable.Lock(GetGameHandleFromHashValue(nGameGUID), &hLock, TRUE))
+        if (D2GameStrc* pGame = GAME_HashTableLock(GetGameHandleFromHashValue(nGameGUID), &hLock, TRUE))
         {
             if (gpD2EventCallbackTable_6FD45830 && gpD2EventCallbackTable_6FD45830->pfCloseGame)
             {
@@ -2440,10 +2488,10 @@ D2GameStrc* __fastcall GAME_LockGame(D2GameGUID nGameGUID)
     }
 
     GAMEDATALOCKEDHANDLE hLock;
-    if (D2GameStrc* pGame = gpGameDataTbl_6FD45818->tHashTable.Lock(GetGameHandleFromHashValue(nGameGUID), &hLock, TRUE))
+    if (D2GameStrc* pGame = GAME_HashTableLock(GetGameHandleFromHashValue(nGameGUID), &hLock, TRUE))
     {
         D2_LOCK(pGame->lpCriticalSection);
-        gpGameDataTbl_6FD45818->tHashTable.Unlock(hLock);
+        GAME_HashTableUnlock(hLock);
         return pGame;
     }
     return nullptr;

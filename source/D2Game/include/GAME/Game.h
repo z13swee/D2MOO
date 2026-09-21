@@ -256,9 +256,9 @@ void* __fastcall sub_6FC35720();
 //D2Game.0x6FC35740
 void GAME_LogMessage(int32_t a1, const char* szFormat, ...);
 //D2Game.0x6FC357C0
-D2GAME_DLL_DECL int32_t __stdcall D2Game_10046();
+D2GAME_DLL_DECL int32_t __stdcall GAME_Initialize();
 //D2Game.0x6FC35810
-int32_t __stdcall D2Game_10050();
+int32_t __stdcall GAME_Shutdown();
 //D2Game.0x6FC35840
 D2GameGUID __fastcall GAME_GetGameGUIDFromGameId(uint16_t nGameId);
 //D2Game.0x6FC35880
