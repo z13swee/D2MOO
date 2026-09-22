@@ -5,6 +5,9 @@
 
 #pragma pack(1)
 
+extern int32_t dword_6FD4DD80;
+extern int32_t dword_6FD4DD84;
+
 struct D2NpcRecordStrc;
 struct D2NpcVendorChainStrc;
 

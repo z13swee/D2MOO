@@ -695,7 +695,7 @@ void __fastcall D2GAME_PACKETS_SendPacket0x1A_B_C_6FC3D410(D2ClientStrc* pClient
             D2GSPacketSrv1B packet1B = {};
 
             packet1B.nHeader = 0x1B;
-            packet1B.nExperience = nExperience;
+            packet1B.nExperience = nDiff;
 
             D2GAME_PACKETS_SendPacket_6FC3C710(pClient, &packet1B, sizeof(packet1B));
         }
@@ -704,7 +704,7 @@ void __fastcall D2GAME_PACKETS_SendPacket0x1A_B_C_6FC3D410(D2ClientStrc* pClient
             D2GSPacketSrv1A packet1A = {};
 
             packet1A.nHeader = 0x1A;
-            packet1A.nExperience = nExperience;
+            packet1A.nExperience = nDiff;
 
             D2GAME_PACKETS_SendPacket_6FC3C710(pClient, &packet1A, sizeof(packet1A));
         }
