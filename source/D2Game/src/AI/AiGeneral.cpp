@@ -337,6 +337,9 @@ D2MapAIStrc** __stdcall AIGENERAL_GetMapAiFromUnit(D2UnitStrc* pUnit)
 //D2Game.0x6FCCF270
 void __fastcall AIGENERAL_SetOwnerData(D2GameStrc* pGame, D2UnitStrc* pUnit, int32_t nOwnerGUID, int32_t nOwnerType, int32_t bSetFlag1, int32_t bSetFlag2)
 {
+	if (!pUnit || pUnit->dwUnitType != UNIT_MONSTER)
+		return;
+
 	D2AiControlStrc* pAiControl = AIGENERAL_GetAiControlFromUnit(pUnit);
 
 	if (bSetFlag2)

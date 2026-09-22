@@ -572,6 +572,7 @@ void __fastcall SUNITINACTIVE_FreeInactiveUnitLists(D2GameStrc* pGame)
 //D2Game.0x6FCC4370
 void __fastcall SUNITINACTIVE_CompressUnitIfNeeded(D2GameStrc* pGame, D2UnitStrc* pUnit)
 {
+	const int32_t nUnitType = pUnit->dwUnitType;
 	int32_t bCompress = 0;
 	int32_t bIsDead = 0;
 
@@ -755,7 +756,7 @@ void __fastcall SUNITINACTIVE_CompressUnitIfNeeded(D2GameStrc* pGame, D2UnitStrc
 			break;
 		}
 
-		if (pUnit->dwUnitType != UNIT_ITEM)
+		if (nUnitType != UNIT_ITEM)
 		{
 			SUNIT_RemoveUnit(pGame, pUnit);
 		}

@@ -71,7 +71,7 @@ int32_t __fastcall sub_6FC66260(D2GameStrc* pGame, D2ActiveRoomStrc* pRoom, D2Ro
         const int32_t nX = ITEMS_RollLimitedRandomNumber(pSeed, nRight) + nLeft;
         const int32_t nY = ITEMS_RollLimitedRandomNumber(pSeed, nBottom) + nTop;
 
-        int32_t bSpawnMonster = 0;
+        int32_t bTooCloseToWarp = 0;
         if (a7 && pRoom)
         {
             const int32_t nLevelId = DUNGEON_GetLevelIdFromRoom(pRoom);
@@ -87,12 +87,12 @@ int32_t __fastcall sub_6FC66260(D2GameStrc* pGame, D2ActiveRoomStrc* pRoom, D2Ro
                         const int32_t nYDiff = nY - pWarpCoordinates[j + 9];
                         if (nXDiff * nXDiff + nYDiff * nYDiff < nWarpDist)
                         {
-                            bSpawnMonster = 1;
+							bTooCloseToWarp = 1;
                             break;
                         }
                     }
 
-                    if (!bSpawnMonster)
+                    if (!bTooCloseToWarp)
                     {
                         int32_t nSpawnX = 0;
                         int32_t nSpawnY = 0;
@@ -105,7 +105,7 @@ int32_t __fastcall sub_6FC66260(D2GameStrc* pGame, D2ActiveRoomStrc* pRoom, D2Ro
                             const int32_t nYDiff = nY - nSpawnY;
                             if (nXDiff * nXDiff + nYDiff * nYDiff < nWarpDist)
                             {
-                                bSpawnMonster = 1;
+								bTooCloseToWarp = 1;
                                 break;
                             }
                         }
@@ -114,24 +114,27 @@ int32_t __fastcall sub_6FC66260(D2GameStrc* pGame, D2ActiveRoomStrc* pRoom, D2Ro
             }
         }
 
-        if (bSpawnMonster)
+		if (bTooCloseToWarp)
+		{
+			continue;
+		}
+
+        if (pRoomCoordList)
         {
-            if (pRoomCoordList)
-            {
-                if (D2Common_10095(pRoom, nX, nY) == nRoomCoordListIndex && sub_6FC6A030(pGame, pRoom, pRoomCoordList, nX, nY, nSuperUniqueId, 1, -1, 1))
-                {
-                    *pX = nX;
-                    *pY = nY;
-                    return 1;
-                }
-            }
-            else if (D2GAME_SpawnMonster_6FC69F10(pGame, pRoom, nX, nY, nSuperUniqueId, 1, -1, 1))
+            if (D2Common_10095(pRoom, nX, nY) == nRoomCoordListIndex && sub_6FC6A030(pGame, pRoom, pRoomCoordList, nX, nY, nSuperUniqueId, 1, -1, 1))
             {
                 *pX = nX;
                 *pY = nY;
                 return 1;
             }
         }
+        else if (D2GAME_SpawnMonster_6FC69F10(pGame, pRoom, nX, nY, nSuperUniqueId, 1, -1, 1))
+        {
+            *pX = nX;
+            *pY = nY;
+            return 1;
+        }
+        
     }
 
     return 0;
