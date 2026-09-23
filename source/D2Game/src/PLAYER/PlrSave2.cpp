@@ -511,13 +511,17 @@ int32_t __fastcall PLRSAVE2_CreateSaveFile(D2GameStrc* pGame, D2UnitStrc* pPlaye
         return 2;
     }
 
-    int32_t nResult = PLRSAVE2_WriteSaveHeader(pGame, pPlayer, &pData, &pData[nMaxSize]);
+    //int32_t nResult = PLRSAVE2_WriteSaveHeader(pGame, pPlayer, &pData, &pData[nMaxSize]);
+	uint8_t* pStart = pData;
+	const uint8_t* pEnd = pStart + nMaxSize;
+
+	int32_t nResult = PLRSAVE2_WriteSaveHeader(pGame, pPlayer, &pData, pEnd);
     if (nResult)
     {
         return nResult;
     }
 
-    const uint8_t* pEnd = &pData[nMaxSize];
+    //const uint8_t* pEnd = &pData[nMaxSize];
     
     uint8_t* ppSection = pData;
     if (ppSection + 298 > pEnd)
@@ -619,10 +623,15 @@ int32_t __fastcall PLRSAVE2_CreateSaveFile(D2GameStrc* pGame, D2UnitStrc* pPlaye
         }
     }
 
-    *pSize = ppSection - pData;
+    //*pSize = ppSection - pData;
+	*pSize = ppSection - pStart;
 
-    *((uint32_t*)pData + 2) = *pSize;
-    *((uint32_t*)pData + 3) = FOG_ComputeChecksum(pData, *pSize);
+    //*((uint32_t*)pData + 2) = *pSize;
+    //*((uint32_t*)pData + 3) = FOG_ComputeChecksum(pData, *pSize);
+	D2SaveHeaderStrc* pHeader = (D2SaveHeaderStrc*)pStart;
+	pHeader->dwSize = *pSize;
+	pHeader->dwChecksum = 0;
+	pHeader->dwChecksum = FOG_ComputeChecksum(pStart, *pSize);
 
     return 0;
 }

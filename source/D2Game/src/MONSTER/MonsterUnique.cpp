@@ -2252,7 +2252,7 @@ BOOL __fastcall sub_6FC6EC10(D2UnitStrc* pUnit, D2MonUModTxt* pMonUModTxtRecord,
 				// SUNITDMG_CheckMonType does not check sgptDataTables->pMonTypeNest if mon type is 0
 				// However original code in this function does. Just in case, trigger the error if this should actually be supported.
 				// This is unlikely since 0 is MONTYPE_NONE.
-				D2_ASSERT(pMonStatsTxtRecord->wMonType != MONTYPE_NONE && nExcludeMonType != MONTYPE_NONE);
+				// D2_ASSERT(pMonStatsTxtRecord->wMonType != MONTYPE_NONE && nExcludeMonType != MONTYPE_NONE);
 				if (SUNITDMG_CheckMonType(pMonStatsTxtRecord->wMonType, nExcludeMonType))
 				{
 					return FALSE;

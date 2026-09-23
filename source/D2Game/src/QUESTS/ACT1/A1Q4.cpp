@@ -249,14 +249,14 @@ void __fastcall ACT1Q4_SetMonolithOrder(D2QuestDataStrc* pQuestData)
 	D2SeedStrc* pSeed = QUESTS_GetGlobalSeed(pQuestData->pGame);
 	for (int32_t i = 0; i < 5; ++i)
 	{
-		const uint32_t nRand = ITEMS_RollRandomNumber(pSeed) % 5;
-		if (!pQuestDataEx->nStoneOrder[nRand])
-		{
-			char szMessage[128] = {};
-			sprintf(szMessage, "stone %d is class %d", nRand, nMonolithClassIds[i]);
-			QUESTS_DebugOutput(pQuestData->pGame, szMessage, __FILE__, __LINE__);
-			pQuestDataEx->nStoneOrder[nRand] = nMonolithClassIds[i];
-		}
+		uint32_t nRand = ITEMS_RollRandomNumber(pSeed) % 5;
+		while (pQuestDataEx->nStoneOrder[nRand])
+			nRand = (nRand + 1) % 5;
+
+		char szMessage[128] = {};
+		sprintf(szMessage, "stone %d is class %d", nRand, nMonolithClassIds[i]);
+		QUESTS_DebugOutput(pQuestData->pGame, szMessage, __FILE__, __LINE__);
+		pQuestDataEx->nStoneOrder[nRand] = nMonolithClassIds[i];
 	}
 }
 
