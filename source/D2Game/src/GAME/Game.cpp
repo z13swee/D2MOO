@@ -128,10 +128,32 @@ static void GAME_HashTableUnlock(GAMEDATALOCKEDHANDLE hLock)
 
 static D2GameStrc* GAME_HashTableLock(HGAMEDATA hGame, GAMEDATALOCKEDHANDLE* pHLock, int32_t bForWriting)
 {
+	if (!gpGameDataTbl_6FD45818 || !hGame || hGame == D2GameReservedSlotHandle)
+	{
+		return nullptr;
+	}
+
 #if D2GAME_ROUTE_HASHTABLE_THROUGH_FOG
     return D2GameDataTable_Lock(gpGameDataTbl_6FD45818, 0, hGame, pHLock, bForWriting);
 #else
     return gpGameDataTbl_6FD45818->tHashTable.Lock(hGame, pHLock, bForWriting);
+#endif
+}
+
+static void GAME_HashTableDeleteUnlock(D2GameStrc* pGame, GAMEDATALOCKEDHANDLE hLock)
+{
+	if (!gpGameDataTbl_6FD45818)
+	{
+		return;
+	}
+
+#if D2GAME_ROUTE_HASHTABLE_THROUGH_FOG
+	// Fog allocated this table. VS2022 DeleteUnlock uses the wrong vtable and
+	// can leave the Fog CS as NULL (ntdll then writes 0x14 on the next Lock).
+	D2_MAYBE_UNUSED(pGame);
+	GAME_HashTableUnlock(hLock);
+#else
+	gpGameDataTbl_6FD45818->tHashTable.DeleteUnlock(pGame, hLock);
 #endif
 }
 
@@ -192,11 +214,11 @@ int32_t __stdcall GAME_Initialize()
 //D2Game.0x6FC35810
 int32_t __stdcall GAME_Shutdown()
 {
+    gpGameDataTbl_6FD45818 = nullptr;
     CLIENTS_Release();
     DeleteCriticalSection(&gCriticalSection_6FD45800);
     SUNITPROXY_ClearGlobalItemCache();
     gwGameId_6FD2CA04 = 1;
-    gpGameDataTbl_6FD45818 = nullptr;
     gnAct_6FD45824 = 0;
     return TRUE;
 }
@@ -204,6 +226,11 @@ int32_t __stdcall GAME_Shutdown()
 //D2Game.0x6FC35840
 D2GameGUID __fastcall GAME_GetGameGUIDFromGameId(uint16_t nGameId)
 {
+	if (!gpGameDataTbl_6FD45818 || nGameId == 0 || nGameId > std::size(hGameArray_6FD447F8))
+	{
+		return 0;
+	}
+
 	D2GameGUID nGUID = 0;
 	EnterCriticalSection(&gCriticalSection_6FD45800);
 	if (hGameArray_6FD447F8[nGameId - 1] && hGameArray_6FD447F8[nGameId - 1] != D2GameReservedSlotHandle)
@@ -2471,7 +2498,8 @@ void __fastcall GAME_CloseGame(D2GameGUID nGameGUID)
 
             GAME_FreeGame(nGameGUID, pGame);
 
-            gpGameDataTbl_6FD45818->tHashTable.DeleteUnlock(pGame, hLock);
+            // gpGameDataTbl_6FD45818->tHashTable.DeleteUnlock(pGame, hLock);
+			GAME_HashTableDeleteUnlock(pGame, hLock);
         }
     }
 
@@ -2482,7 +2510,7 @@ _Acquires_lock_(*(return->lpCriticalSection))
 _Acquires_lock_(return->lpCriticalSection)
 D2GameStrc* __fastcall GAME_LockGame(D2GameGUID nGameGUID)
 {
-    if (!gpGameDataTbl_6FD45818)
+	if (!gpGameDataTbl_6FD45818 || !nGameGUID || nGameGUID == D2GameInvalidGUID)
     {
         return nullptr;
     }
