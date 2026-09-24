@@ -668,7 +668,8 @@ bool __fastcall ACT2Q4_SeqCallback(D2QuestDataStrc* pQuestData)
 		FOG_DisplayAssert("pQuestInfo->pSequence", __FILE__, __LINE__);
 		exit(-1);
 	}
-	pQuestData->pfSeqFilter(pQuest);
+	//pQuestData->pfSeqFilter(pQuest);
+	pQuest->pfSeqFilter(pQuest);
 	return true;
 }
 
