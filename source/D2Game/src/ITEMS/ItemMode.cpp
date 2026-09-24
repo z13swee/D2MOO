@@ -3970,9 +3970,9 @@ int32_t __fastcall sub_6FC47D30(D2GameStrc* pGame, D2UnitStrc* pUnit, int32_t nI
                         D2GAME_RemoveItem_6FC471F0(pGame, pUnit, pItem, 0);
                         return 1;
                     }
-                }
 
-                SUNIT_AttachSound(pUnit, 19, pUnit);
+					SUNIT_AttachSound(pUnit, 19, pUnit);
+                }
             }
 
             return 1;
