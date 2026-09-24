@@ -5423,7 +5423,7 @@ int32_t __fastcall sub_6FC4AD80(D2GameStrc* pGame, D2UnitStrc* pPlayer, D2UnitSt
 
                     if (sub_6FC4AB10(pPlayer, pCorpseItem, &pPlayerItem, &pOtherPlayerItem, &nBodyLoc))
                     {
-                        D2_ASSERT(INVENTORY_GetItemFromBodyLoc(pPlayerInventory, nBodyLoc));
+                        D2_ASSERT(INVENTORY_GetItemFromBodyLoc(pPlayerInventory, nBodyLoc) == nullptr);
 
                         if (INVENTORY_PlaceItemInBodyLoc(pPlayerInventory, pCorpseItem, nBodyLoc))
                         {
