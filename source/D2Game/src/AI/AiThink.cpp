@@ -11197,6 +11197,11 @@ void __fastcall AITHINK_Fn054_NpcStationary(D2GameStrc* pGame, D2UnitStrc* pUnit
 		return;
 	}
 
+	if (pUnit->dwUnitType == UNIT_MONSTER && pUnit->pMonsterData)
+	{
+		pMonInteract = pUnit->pMonsterData->pMonInteract;
+	}
+
 	if (pUnit->dwClassId == MONSTER_TYRAEL1)
 	{
 		if (!ACT2Q6_IsInRangeOfTyrael(pGame, pUnit) || MONSTERAI_HasInteractUnit(pMonInteract))
