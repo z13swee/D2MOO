@@ -25,19 +25,19 @@ D2NPCMessageTableStrc gpAct4Q3NpcMessages[] =
 {
 	{
 		{
-			{ MONSTER_CAIN4, 166, 0, 1 },
+			{ MONSTER_CAIN4, 678, 0, 1 },
 		},
 		1
 	},
 	{
 		{
-			{ MONSTER_CAIN4, 167, 0, 1 },
+			{ MONSTER_CAIN4, 679, 0, 1 },
 		},
 		1
 	},
 	{
 		{
-			{ MONSTER_CAIN4, 168, 0, 1 },
+			{ MONSTER_CAIN4, 680, 0, 1 },
 		},
 		1
 	},
@@ -325,7 +325,8 @@ bool __fastcall ACT4Q3_SeqCallback(D2QuestDataStrc* pQuestData)
 		FOG_DisplayAssert("pQuest->pSequence", __FILE__, __LINE__);
 		exit(-1);
 	}
-	return pQuestData->pfSeqFilter(pQuest);
+	// return pQuestData->pfSeqFilter(pQuest);
+	return pQuest->pfSeqFilter(pQuest);
 }
 
 //D2Game.0x6FCB0650
