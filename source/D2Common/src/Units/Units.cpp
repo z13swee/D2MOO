@@ -1330,12 +1330,14 @@ BOOL UNITS_CanAnimModeUseAttackRate(int nUnitType, int nAnimMode, D2UnitStrc* pU
 
 	if (pAnimModeModulators->bCanUseSkillAttackRate)
 	{
-		D2SkillStrc* pUsedSkill = UNITS_GetUsedSkill(pUnit);
-		if (!pUsedSkill || !pUsedSkill->pSkillsTxt)
-			return FALSE;
-
-		D2SkillsTxt* pSkillsRecord = DATATBLS_GetSkillsTxtRecord(UNITS_GetUsedSkill(pUnit)->pSkillsTxt->nSkillId);
-		return (pSkillsRecord->dwFlags[0] & SKILLSFLAG_USEATTACKRATE) != 0;
+		if (D2SkillStrc* pUsedSkill = UNITS_GetUsedSkill(pUnit))
+		{
+			if (D2SkillsTxt* pSkillsRecord = DATATBLS_GetSkillsTxtRecord(pUsedSkill->pSkillsTxt->nSkillId))
+			{
+				return (pSkillsRecord->dwFlags[0] & SKILLSFLAG_USEATTACKRATE) != 0;
+			}
+		}
+		return FALSE;
 	}
 
 	return FALSE;
@@ -1770,7 +1772,7 @@ void __stdcall UNITS_SetAnimationSpeed(D2UnitStrc* pUnit, int nSpeed)
 int __stdcall UNITS_IsAtEndOfFrameCycle(D2UnitStrc* pUnit)
 {
 	D2_ASSERT(pUnit);
-	
+
 	if (pUnit->pAnimSeq)
 	{
 		return (int)pUnit->dwFrameCountPrecise <= 0;

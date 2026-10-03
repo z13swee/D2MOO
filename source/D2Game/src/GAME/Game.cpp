@@ -2201,6 +2201,11 @@ int32_t __stdcall GAME_UpdateGamesProgress(int32_t a1)
     LARGE_INTEGER start = {};
     QueryPerformanceCounter(&start);
 
+    if (!gnTargetMsPerFrame_6FD457F8)
+    {
+        sub_6FC38E00();
+    }
+
     const uint32_t nSysTimeMs = timeGetTime() & 0x7FFFFFFF;
     if (!dword_6FD45844)
     {

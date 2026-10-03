@@ -69,7 +69,6 @@ void __stdcall TASK_FreeAllQueueSlots()
 //D2Game.0x6FC405B0 (#10041) 
 int __cdecl D2Game_10041_TASK_Create()
 {
-    UNIMPLEMENTED();
     EnterCriticalSection(&gTaskSlotsCriticalSection.cs);
     if (!gpTaskQueueLink.pPrev)
     {
@@ -217,10 +216,11 @@ BOOL __fastcall D2Game_10042(D2TaskStrc* pTask, int nTaskType, D2LinkStrc* pPrev
 //D2Game.0x6FC40930 (#10043)
 int32_t __fastcall D2Game_10043(int8_t a1, int32_t* pOutBalanceTaskType)
 {
+    D2TaskStrc** ppOutTask = reinterpret_cast<D2TaskStrc**>(pOutBalanceTaskType);
     const int8_t nIndex = a1 & 31;
     int32_t nResult = 100;
 
-    *pOutBalanceTaskType = 0;
+    *ppOutTask = nullptr;
 
     EnterCriticalSection(&gtTaskQueuesCriticalSections[nIndex].cs);
 
@@ -229,12 +229,14 @@ int32_t __fastcall D2Game_10043(int8_t a1, int32_t* pOutBalanceTaskType)
         D2LinkStrc* pLink = pTask->pTaskBalanceLink.pNext;
         if (pLink != &pTask->pTaskBalanceLink && pLink)
         {
+            // Queued games are linked through pTaskBalanceLink.pNext (D2TaskStrc+0x0C), not pTaskQueueLink.
+            D2TaskStrc* pQueuedTask = (D2TaskStrc*)((char*)pLink - 0x0C);
             const int64_t nTickCount = TASK_GetClockTime();
-            nResult = CONTAINING_RECORD(pLink, D2TaskStrc, pTaskQueueLink)->nType - nTickCount;
+            nResult = pQueuedTask->nTaskQ - nTickCount;
             if (nResult <= 0)
             {
                 TASK_LinkList_Remove(pLink);
-                *pOutBalanceTaskType = CONTAINING_RECORD(pLink, D2TaskStrc, pTaskQueueLink)->nType;
+                *ppOutTask = pQueuedTask;
             }
         }
 

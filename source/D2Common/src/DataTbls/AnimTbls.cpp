@@ -87,7 +87,10 @@ static D2AnimDataRecordStrc* DATATBLS_GetAnimDataRecordFromPath(char* szPath)
 const D2AnimDataRecordStrc* __fastcall DATATBLS_GetAnimDataRecord(D2UnitStrc* pUnit, int nClassId, int nMode, int nUnitType, D2InventoryStrc* pInventory)
 {
 	int nWeaponClassCode = 0;
-	char szPath[8] = {};
+	// Retail 6FD474A0 uses a 12-byte stack buffer (sub esp, 0Ch). Token+mode+wclass
+	// can be 9 chars + NUL (e.g. DIAB+DT+HTH). An 8-byte buffer overflows and can
+	// hash/match the wrong AnimData record, which shortens death (DT→DD).
+	char szPath[12] = {};
 	D2Common_10884_COMPOSIT_unk(pUnit, nClassId, nMode, nUnitType, pInventory, szPath, &nWeaponClassCode, FALSE, 1);
 	if (D2AnimDataRecordStrc* pFound = DATATBLS_GetAnimDataRecordFromPath(szPath))
 	{
@@ -103,7 +106,7 @@ const D2AnimDataRecordStrc* __fastcall DATATBLS_GetAnimDataRecord(D2UnitStrc* pU
 void __stdcall DATATBLS_UnitAnimInfoDebugSet(D2UnitStrc* pUnit, int nAnimSpeed)
 {
 	int nWeaponClassCode = 0;
-	char szPath[8] = {};
+	char szPath[12] = {};
 	D2Common_10885_COMPOSIT_unk(pUnit, szPath, &nWeaponClassCode, 0, 1, pUnit->pInventory, -1);
 	if (D2AnimDataRecordStrc* pRecord = DATATBLS_GetAnimDataRecordFromPath(szPath))
 	{
@@ -121,16 +124,19 @@ BOOL __stdcall DATATBLS_GetAnimDataInfo(char* szPath, int* pOutLength, int* pOut
 		*pOutLength = pRecord->dwFrames;
 		*pOutAnimSpeed = pRecord->dwAnimSpeed;
 
-		for (uint32_t i = 0; i < pRecord->dwFrames; ++i)
+		// Retail 6FD47808: if no pFrameFlags are set, firstTagged is the loop
+		// index after walking dwFrames (capped at 144). Hex-Rays wrote 0,
+		// which makes D2Client end DT immediately (Diablo DIDTHTH has no flags).
+		uint32_t i = 0;
+		for (; i < pRecord->dwFrames; ++i)
 		{
-			if (pRecord->pFrameFlags[i] || i >= D2AnimDataRecordStrc::MAX_FRAME_FLAGS)
+			if (i >= D2AnimDataRecordStrc::MAX_FRAME_FLAGS || pRecord->pFrameFlags[i])
 			{
-				*pOutFirstFrameTagged = i;
-				return TRUE;
+				break;
 			}
 		}
 
-		*pOutFirstFrameTagged = 0;
+		*pOutFirstFrameTagged = i;
 		return TRUE;
 	}
 

@@ -196,11 +196,11 @@ struct D2GameStrc : TSHashObject<D2GameStrc, HASHKEY_NONE> // called SGAMEDATA i
 	uint32_t nSyncTimer;							//0x1DC4
 
 #if D2_VERSION_MAJOR <= 1 && D2_VERSION_MINOR <= 10
-	uint32_t unk0x1DC8;								//0x1DC8 (Unused? Removed in 1.11)
-	uint32_t unk0x1DCC;								//0x1DCC (Unused? Removed in 1.11)
-	uint32_t unk0x1DD0;								//0x1DD0 (Unused? Removed in 1.11)
-	uint32_t unk0x1DD4;								//0x1DD4 (Unused? Removed in 1.11)
-	uint32_t unk0x1DD8;								//0x1DD8 (Unused? Removed in 1.11)
+	uint32_t unk0x1DC8;								//0x1DC8 D2TaskStrc overlay for TASK_QueueGame. 0x18 bytes through unk0x1DDC. Removed in 1.11
+	uint32_t unk0x1DCC;								//0x1DCC
+	uint32_t unk0x1DD0;								//0x1DD0
+	uint32_t unk0x1DD4;								//0x1DD4
+	uint32_t unk0x1DD8;								//0x1DD8
 	uint32_t unk0x1DDC;								//0x1DDC
 	int32_t nWorldEventState;						//0x1DE0
 	int32_t dwWorldEventLastMessageFrame;			//0x1DE4
@@ -255,10 +255,10 @@ int32_t __fastcall sub_6FC35700();
 void* __fastcall sub_6FC35720();
 //D2Game.0x6FC35740
 void GAME_LogMessage(int32_t a1, const char* szFormat, ...);
-//D2Game.0x6FC357C0
+//D2Game.0x6FC357C0 (#10046)
 D2GAME_DLL_DECL int32_t __stdcall GAME_Initialize();
-//D2Game.0x6FC35810
-int32_t __stdcall GAME_Shutdown();
+//D2Game.0x6FC35810 (#10050)
+D2GAME_DLL_DECL int32_t __stdcall GAME_Shutdown();
 //D2Game.0x6FC35840
 D2GameGUID __fastcall GAME_GetGameGUIDFromGameId(uint16_t nGameId);
 //D2Game.0x6FC35880
@@ -267,7 +267,7 @@ void __stdcall GAME_InitGameDataTable(D2GameDataTableStrc* pGameDataTbl, void* p
 void __stdcall GAME_SetServerCallbackFunctions(D2ServerCallbackFunctions* pD2ServerCallbackFunctions);
 //D2Game.0x6FC35920 (#10010)
 D2GAME_DLL_DECL void __stdcall GAME_SetInitSeed(int32_t nInitSeed);
-//D2Game.0x6FC35930
+//D2Game.0x6FC35930 (#10011)
 D2GAME_DLL_DECL uint32_t __fastcall GAME_GetFirstGameInitSeed();
 //D2Game.0x6FC35A10
 void __fastcall GAME_ResolveGameNameConflict(D2GameStrc* pGameToSanitize, char* szGameName, int32_t a3);
@@ -311,7 +311,7 @@ void __fastcall GAME_DisconnectClient(D2GameStrc* pGame, D2ClientStrc* pClient, 
 void __fastcall GAME_DisconnectClientById(int32_t nClientId, D2C_SRV2CLT5A_TYPES nEventType);
 //D2Game.0x6FC37880
 BOOL __stdcall GAME_DisconnectClientByName(const char* szClientName, D2C_SRV2CLT5A_TYPES nEventType);
-//D2Game.0x6FC379C0
+//D2Game.0x6FC379C0 (#10024)
 void __stdcall GAME_RemoveClientFromGame(int32_t nClientId);
 //D2Game.0x6FC37B10
 void __fastcall sub_6FC37B10(D2GameStrc* pGame);
@@ -373,7 +373,7 @@ D2GAME_DLL_DECL void __stdcall GAME_CloseAllGames();
 D2GAME_DLL_DECL int32_t __fastcall GAME_GetGamesCount();
 //D2Game.0x6FC39B70 (#10057)
 D2GAME_DLL_DECL int32_t __stdcall GAME_GetExpansionGamesCount();
-//D2Game.0x6FC39C70
+//D2Game.0x6FC39C70 (#10053)
 D2GAME_DLL_DECL void __stdcall GAME_CountGamesByClientCount(int16_t* pCount, int32_t nArraySize);
 //D2Game.0x6FC39D80
 D2GAME_DLL_DECL void __stdcall GAME_CountGamesByDuration(uint16_t* a1, int32_t nMaxCount);
@@ -381,7 +381,7 @@ D2GAME_DLL_DECL void __stdcall GAME_CountGamesByDuration(uint16_t* a1, int32_t n
 D2GAME_DLL_DECL int32_t __fastcall GAME_GetFrameRate();
 //D2Game.0x6FC39ED0
 D2GAME_DLL_DECL void __stdcall GAME_GetMemoryUsage(int* pCurrentMemoryUsage, int* pPeakMemoryUsageInLast10s);
-//D2Game.0x6FC39EF0
+//D2Game.0x6FC39EF0 (#10013)
 D2GAME_DLL_DECL int32_t __stdcall GAME_GetGameClientCount(uint16_t nGameId);
 //D2Game.0x6FC39FF0 (#10014)
 D2GAME_DLL_DECL BOOL __stdcall GAME_GetGameInformation(uint16_t nGameId, D2GameInfoStrc* pGameInfo);
@@ -420,8 +420,8 @@ void __fastcall GAME_ForEachIngameClient(D2GameStrc* pGame, GAME_ForEachIngameCl
 D2GameStrc* __fastcall sub_6FC3B160();
 //D2Game.0x6FC3B220
 void __fastcall GAME_LeaveGlobalGamesCriticalSection();
-//D2Game.0x6FC3B280
-void __stdcall GAME_SetTargetFrameRate(int32_t a1);
+//D2Game.0x6FC3B280 (#10008)
+D2GAME_DLL_DECL void __stdcall GAME_SetTargetFrameRate(int32_t nFrameRate);
 //D2Game.0x6FC3B2A0 (#10009)
 D2GAME_DLL_DECL void __stdcall GAME_SetGlobalAct(int32_t nAct);
 //D2Game.0x6FC3B2B0
